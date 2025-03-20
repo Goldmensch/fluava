@@ -1,0 +1,11 @@
+test-project
+
+.idea/
+*.iml
+target/
+**/testing
+/logs
+.direnv
+
+**/build/
+.gradle/
