@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-
+    implementation("io.github.parseworks:parseworks:0.1.1")
 }
 
 testing {
