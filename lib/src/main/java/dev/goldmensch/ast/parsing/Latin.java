@@ -1,6 +1,6 @@
 package dev.goldmensch.ast.parsing;
 
-public class Latin {
+class Latin {
     static boolean upperAlpha(char c) {
         return range(c, 0x41, 0x5A);
     }
@@ -11,10 +11,6 @@ public class Latin {
 
     static boolean number(char ch) {
         return range(ch, 0x30, 0x39);
-    }
-
-    static boolean lineEnd(char ch) {
-        return ch != 0x0D;
     }
 
     static boolean hexChar(char ch) {
