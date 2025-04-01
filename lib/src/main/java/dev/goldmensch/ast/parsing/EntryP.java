@@ -1,6 +1,6 @@
 package dev.goldmensch.ast.parsing;
 
-import dev.goldmensch.ast.parsing.tree.entry.CommentLine;
+import dev.goldmensch.ast.parsing.tree.entry.Comment;
 import dev.goldmensch.ast.parsing.tree.entry.Entry;
 import dev.goldmensch.ast.parsing.tree.entry.Term;
 import dev.goldmensch.ast.parsing.tree.message.Attribute;
@@ -33,7 +33,6 @@ public class EntryP {
             .thenSkip(opt_blank_inline)
             .thenSkip(chr('='))
             .thenSkip(opt_blank_inline)
-            .thenSkip(blank_block.optional()) // ignore leading new lines
             .then(oneOf(
                     pattern.map(Pattern::new).then(attribute.zeroOrMany()).map(Pair::new),
                     Parser.<Character, Pattern>pure(null).then(attribute.many()).map(Pair::new)
@@ -54,16 +53,16 @@ public class EntryP {
     private static final Parser<Character, Character> comment_char = any(Character.class).not(line_end);
 
     private static final Parser<Character, Entry> comment_line = oneOf(
-            string("###").as(CommentLine.Type.TRIPLE),
-            string("##").as(CommentLine.Type.DOUBLE),
-            string("#").as(CommentLine.Type.SINGLE)
+            string("###").as(Comment.Type.TRIPLE),
+            string("##").as(Comment.Type.DOUBLE),
+            string("#").as(Comment.Type.SINGLE)
     )
             .then(chr(' ').skipThen(comment_char.zeroOrMany())
                     .map(Utils::listToString)
                     .optional()
             )
             .thenSkip(line_end)
-            .map(type -> content -> new CommentLine(type, content.orElse("")));
+            .map(type -> content -> new Comment(type, content.orElse("")));
 
     // Entry
     static final Parser<Character, Entry> entry = oneOf(

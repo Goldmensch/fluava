@@ -1,8 +1,8 @@
 package dev.goldmensch.ast.parsing.tree.entry;
 
-public record CommentLine(
+public record Comment(
         Type type,
-        String line
+        String content
 ) implements Entry {
     public enum Type {
         SINGLE,
