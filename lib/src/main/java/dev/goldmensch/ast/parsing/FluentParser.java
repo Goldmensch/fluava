@@ -1,24 +1,78 @@
 package dev.goldmensch.ast.parsing;
 
-import dev.goldmensch.ast.parsing.tree.*;
+import dev.goldmensch.ast.parsing.tree.Resource;
+import dev.goldmensch.ast.parsing.tree.entry.Comment;
 import io.github.parseworks.*;
 import io.github.parseworks.impl.Failure;
 
 import java.util.function.Function;
 
 import static dev.goldmensch.ast.parsing.EntryP.entry;
-import static dev.goldmensch.ast.parsing.MiscP.*;
+import static dev.goldmensch.ast.parsing.MiscP.blank_block;
 import static io.github.parseworks.Combinators.*;
 
 public final class FluentParser implements Function<String, Resource> {
 
     public static void main(String[] args) {
         String text = """
-emails = You have { $unreadEmails } unread emails.
-emails2 = You have { NUMBER($unreadEmails) } unread emails.
+one-line = test one line
 
-last-notice =
-    Last checked: { DATETIME($lastChecked, day: "numeric", month: "long") }.
+one-line-follow-start-placeable = 
+
+{ $test } hoh
+    
+    ads
+    f
+    
+one-line-follow-start-placeable-leading = 
+
+    { $test } hoh 
+    
+    
+    
+    { $test }
+    
+    
+    
+    ads
+    f
+
+
+one-line-follow =     first line - in line
+
+
+   second
+   
+   third
+
+test-value =
+
+
+
+    The blank line above this line is ignored.
+    This is a second line of the value.
+
+    The blank line above this line is preserved. hehe {$var} hoho
+    
+    lol adsfadsf
+    adsf
+    asdf
+    f
+    asd
+    dsf
+    
+    hehe { $haa    
+      
+        
+       
+    } test
+    
+    lololol
+    
+    adf
+    
+    adsf
+    f
 
                 """;
 
@@ -50,7 +104,27 @@ last-notice =
             blank_block.as(new Resource.ResourceComponent.Blank())
             ,junk
     ).zeroOrMany()
+            .map(FluentParser::joinComments)
             .map(Resource::new);
+
+    private static FList<Resource.ResourceComponent> joinComments(FList<Resource.ResourceComponent> components) {
+        FList<Resource.ResourceComponent> result = new FList<>();
+
+        for (Resource.ResourceComponent current : components) {
+            if (current instanceof Comment(
+                    Comment.Type cType, String cContent
+            ) && !result.isEmpty() && result.getLast() instanceof Comment(Comment.Type lType, String lContent) &&
+                cType == lType) {
+                result.removeLast();
+                String content = lContent + "\n" + cContent;
+                result.add(new Comment(cType, content));
+            } else {
+                result.add(current);
+            }
+
+        }
+        return result;
+    }
 
     @Override
     public Resource apply(String s) {
