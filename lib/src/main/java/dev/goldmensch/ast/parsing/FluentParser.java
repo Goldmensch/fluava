@@ -15,64 +15,19 @@ public final class FluentParser implements Function<String, Resource> {
 
     public static void main(String[] args) {
         String text = """
-one-line = test one line
+# Simple things are simple.
+hello-user = Hello, {$userName}!
 
-one-line-follow-start-placeable = 
-
-{ $test } hoh
-    
-    ads
-    f
-    
-one-line-follow-start-placeable-leading = 
-
-    { $test } hoh 
-    
-    
-    
-    { $test }
-    
-    
-    
-    ads
-    f
-
-
-one-line-follow =     first line - in line
-
-
-   second
-   
-   third
-
-test-value =
-
-
-
-    The blank line above this line is ignored.
-    This is a second line of the value.
-
-    The blank line above this line is preserved. hehe {$var} hoho
-    
-    lol adsfadsf
-    adsf
-    asdf
-    f
-    asd
-    dsf
-    
-    hehe { $haa    
-      
-        
-       
-    } test
-    
-    lololol
-    
-    adf
-    
-    adsf
-    f
+# Complex things are possible.
+shared-photos =
+    {$userName} {$photoCount ->
+        [one] added a new photo
+       *[other] added {$photoCount} new photos
+    } to {$userGender ->
+        [male] his stream
+        [female] her stream
+       *[other] their stream
+    }
 
                 """;
 

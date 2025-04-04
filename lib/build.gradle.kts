@@ -7,6 +7,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":cldr-plurals"))
     implementation("io.github.parseworks:parseworks:0.1.1")
 }
 
