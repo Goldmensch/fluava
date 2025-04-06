@@ -22,6 +22,10 @@ tasks.compileJava {
     dependsOn("generatePlurals")
 }
 
+tasks.processResources {
+    dependsOn("generatePlurals")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
