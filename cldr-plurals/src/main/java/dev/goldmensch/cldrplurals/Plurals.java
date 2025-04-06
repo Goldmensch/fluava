@@ -22,7 +22,7 @@ public final class Plurals {
         return rules;
     }
 
-    public static PluralCategory find(Locale locale, Type type, double number) {
+    public static PluralCategory find(Locale locale, Type type, String number) {
         PluralRule rules = forLocale(locale);
         if (rules == null) return null;
 

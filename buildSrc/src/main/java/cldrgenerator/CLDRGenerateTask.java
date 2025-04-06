@@ -1,7 +1,11 @@
 package cldrgenerator;
 
+import cldrgenerator.ast.Condition;
+import com.palantir.javapoet.JavaFile;
+import io.github.parseworks.Result;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.file.Directory;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -13,7 +17,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,34 +33,45 @@ public class CLDRGenerateTask extends DefaultTask {
     private static final URI CARDINAL_URL = URI.create("https://raw.githubusercontent.com/unicode-org/cldr-json/refs/heads/main/cldr-json/cldr-core/supplemental/plurals.json");
     private static final URI ORDINAL_URL = URI.create("https://raw.githubusercontent.com/unicode-org/cldr-json/refs/heads/main/cldr-json/cldr-core/supplemental/ordinals.json");
 
-    Path output = getProject().getLayout().getBuildDirectory().dir("generated/cldr").get().getAsFile().toPath();
+    Directory output = getProject().getLayout().getBuildDirectory().dir("generated/cldr").get();
+    Directory sourceOutput = output.dir("source");
+    Directory resourceOutput = output.dir("resources");
 
     @Inject
     public CLDRGenerateTask() {
         SourceSetContainer sourceSets = getProject().getExtensions().getByType(SourceSetContainer.class);
-        sourceSets.getByName("main").getJava().srcDir(output);
+        sourceSets.getByName("main").getJava().srcDir(sourceOutput);
+        sourceSets.getByName("main").getResources().srcDir(resourceOutput);
 
         getProject().delete(output);
     }
 
     @TaskAction
     public void generate() {
-        Map<Locale, Map<String, String>> cardinal = downloadJson(CARDINAL_URL, content -> parse(content, "cardinal"));
-        Map<Locale, Map<String, String>> ordinal = downloadJson(ORDINAL_URL, content -> parse(content, "ordinal"));
+        Map<Locale, Map<String, Condition>> cardinal = downloadJson(CARDINAL_URL, content -> parse(content, "cardinal"));
+        Map<Locale, Map<String, Condition>> ordinal = downloadJson(ORDINAL_URL, content -> parse(content, "ordinal"));
 
-        cardinal.forEach((locale, stringStringMap) -> System.out.println(locale.getDisplayLanguage() + " -> " + stringStringMap));
 
-        System.out.println();
+        Generator generator = new Generator();
+        JavaFile file = generator.generate(cardinal, ordinal);
 
-        ordinal.forEach((locale, stringStringMap) -> System.out.println(locale.getDisplayLanguage() + " -> " + stringStringMap));
+        try {
+            file.writeToFile(sourceOutput.getAsFile());
+
+            Path servicesFile = resourceOutput.getAsFile().toPath().resolve(Path.of("META-INF", "services", Generator.CLDR_PACKAGE + ".RulesProvider"));
+            Files.createDirectories(servicesFile.getParent());
+            Files.writeString(servicesFile, file.packageName() + "." + Generator.CLASS_NAME, StandardOpenOption.CREATE_NEW);
+        } catch (IOException e) {
+            throw new GradleException("Failed to write generated files to %s".formatted(output), e);
+        }
     }
 
     @OutputDirectory
-    public Path getOutput() {
+    public Directory getOutput() {
         return output;
     }
 
-    private Map<Locale, Map<String, String>> parse(JSONObject json, String name) {
+    private Map<Locale, Map<String, Condition>> parse(JSONObject json, String name) {
         JSONObject supplemental = json.getJSONObject("supplemental");
         JSONObject version = supplemental.getJSONObject("version");
 
@@ -68,12 +86,24 @@ public class CLDRGenerateTask extends DefaultTask {
                 .collect(Collectors.toMap(Locale::of, s -> parseRules(values.getJSONObject(s))));
     }
 
-    private Map<String, String> parseRules(JSONObject object) {
+    private Map<String, Condition> parseRules(JSONObject object) {
         return object.keySet().stream()
                 .collect(Collectors.toMap(
                         s -> s.replaceFirst("pluralRule-count-", "").toUpperCase(),
-                        object::getString)
+                        key -> parseCondition(object.getString(key)))
                 );
+    }
+
+    private Condition parseCondition(String s) {
+        // strip pattern whitespace
+        int[] chars = s.chars()
+                .filter(value -> !List.of(0x200E, 0x200F, 0x0085, 0x2028, 0x2029, 0x0020).contains(value)
+                        && !(0x009 <= value && value <= 0x00D))
+                .toArray();
+        String strippedString = new String(chars, 0, chars.length);
+
+        Result<Character, Condition> result = Parser.rule.parse(strippedString);
+        return result.get();
     }
 
     private <T> T downloadJson(URI uri, Function<JSONObject, T> mapper) {
