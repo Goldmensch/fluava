@@ -3,7 +3,7 @@ package dev.goldmensch.cldrplurals.internal;
 @SuppressWarnings("unused")
 public class Predefined {
 
-    // treats 1000.0/1000.0000/23.0000 etc. as 1000
+    // treats 1000.0/1000.0000/23.0000 etc. as 1000 or 23
     private String[] parts(String value) {
         String normValue = norm(value);
         var parts = normValue.split("[.]");
