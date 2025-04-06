@@ -45,12 +45,12 @@ public class Parser {
             .then(value)
             .map(expr -> not -> value -> {
                 var relation = new Relation.In(expr, new RangeList(FList.of(value)));
-                return not.<Relation>map(_ -> new Relation.Not(relation)).orElse(relation);
+                return not.<Relation>map(__ -> new Relation.Not(relation)).orElse(relation);
             });
 
     private static final io.github.parseworks.Parser<Character, Relation> in_relation = expr.then(
             oneOf(
-                    opt_not.thenSkip(string("in")).map(s -> s.map(_ -> "!=").orElse("=")),
+                    opt_not.thenSkip(string("in")).map(s -> s.map(__ -> "!=").orElse("=")),
                     string("="),
                     string("!=")
             ))
@@ -68,7 +68,7 @@ public class Parser {
             .then(range_list)
             .map(expr -> not -> range_list -> {
                 Relation.Within within = new Relation.Within(expr, range_list);
-                return not.<Relation>map(_ -> new Relation.Not(within)).orElse(within);
+                return not.<Relation>map(__ -> new Relation.Not(within)).orElse(within);
             });
 
 
