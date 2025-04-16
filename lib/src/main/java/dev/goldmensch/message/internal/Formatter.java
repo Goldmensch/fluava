@@ -35,10 +35,10 @@ public class Formatter {
         this.resource = resource;
     }
 
-    public String apply(Map<String, Object> variables) {
+    public String apply(Locale locale, Map<String, Object> variables) {
         if (components == null) return "";
 
-        Task task = new Task(new StringBuilder(), variables);
+        Task task = new Task(locale, new StringBuilder(), variables);
 
         for (PatternElement component : components) {
             add(task, component);
@@ -75,7 +75,7 @@ public class Formatter {
             }
 
             case Computed.Number(String computedValue, double original) -> {
-                PluralCategory category = Plurals.find(Locale.GERMAN, Type.CARDINAL, computedValue);
+                PluralCategory category = Plurals.find(task.locale(), Type.CARDINAL, computedValue);
 
                 for (Variant entry : expression.others()) {
                     if ((entry.key() instanceof InlineExpression.NumberLiteral(double number) && original == number) ||
@@ -94,7 +94,7 @@ public class Formatter {
     }
 
     private void addPattern(Task task, Pattern pattern) {
-        String formatted = new Formatter(resource, pattern).apply(task.variables());
+        String formatted = new Formatter(resource, pattern).apply(task.locale(), task.variables());
         task.append(formatted);
     }
 
@@ -141,7 +141,7 @@ public class Formatter {
                         .map(Argument.Named.class::cast)
                         .collect(Collectors.toMap(Argument.Named::name, named -> switch (named.expression()) {
                             case InlineExpression.StringLiteral(String value) -> value;
-                            case InlineExpression.NumberLiteral(double value)  -> value;
+                            case InlineExpression.NumberLiteral(double value) -> value;
                         }));
 
                 Message.Interpolated refTerm = resource.term(id).interpolated(resolvedArguments);

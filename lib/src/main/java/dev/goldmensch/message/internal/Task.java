@@ -1,8 +1,10 @@
 package dev.goldmensch.message.internal;
 
+import java.util.Locale;
 import java.util.Map;
 
 public record Task(
+        Locale locale,
         StringBuilder builder,
         Map<String, Object> variables
 ) {
