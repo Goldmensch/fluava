@@ -1,75 +1,56 @@
 package dev.goldmensch.message;
 
-import dev.goldmensch.ast.FluentParser;
-import dev.goldmensch.ast.tree.Resource;
+import dev.goldmensch.ast.tree.entry.Term;
 import dev.goldmensch.ast.tree.message.Attribute;
 import dev.goldmensch.message.internal.Formatter;
+import dev.goldmensch.resource.Resource;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Message implements Function<Map<String, Object>, String> {
 
+    private final Locale locale;
     private final Formatter contentFormatter;
     private final Map<String, Formatter> attributeFormatters;
 
-    public Message(dev.goldmensch.ast.tree.message.Message astMessage) {
+    public Message(Locale locale, Resource leakingResource, dev.goldmensch.ast.tree.message.Message astMessage) {
+        this.locale = locale;
         this.contentFormatter = astMessage.content()
-                .map(Formatter::new)
+                .map(msg -> new Formatter(leakingResource, msg))
                 .orElse(Formatter.EMPTY);
 
         this.attributeFormatters = astMessage.attributes()
                 .stream()
-                .collect(Collectors.toMap(Attribute::id, (attribute) -> new Formatter(attribute.pattern())));
+                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(leakingResource, attribute.pattern())));
+    }
+
+    public Message(Locale locale, Resource leakingResource, Term astTerm) {
+        this.locale = locale;
+        this.contentFormatter = new Formatter(leakingResource, astTerm.pattern());
+        this.attributeFormatters = astTerm.attributes()
+                .stream()
+                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(leakingResource, attribute.pattern())));
     }
 
     @Override
     public String apply(Map<String, Object> variables) {
-        return contentFormatter.apply(variables);
+        return contentFormatter.apply(locale, variables);
     }
 
     public Interpolated interpolated(Map<String, Object> variables) {
         Map<String, String> attributes = attributeFormatters.entrySet()
                 .stream()
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().apply(variables)))
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().apply(locale, variables)))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return new Interpolated(contentFormatter.apply(variables), attributes);
+        return new Interpolated(contentFormatter.apply(locale, variables), attributes);
     }
 
     public record Interpolated(
             String value,
             Map<String, String> attributes
     ) {}
-
-    public static void main(String[] args) {
-        String text = """
-# Simple things are simple.
-hello-user = Hello, {$userName}!
-    .attribute-one = test {$userName}
-
-# Complex things are possible.
-shared-photos =
-    {$userName} {$photoCount ->
-        [one] added a new photo
-       *[other] added {$photoCount} new photos
-    } to {$userGender ->
-        [male] his stream
-        [female] her stream
-       *[other] their stream
-    }
-
-                """;
-
-        Resource res = new FluentParser().apply(text);
-        for (Resource.ResourceComponent entry : res.components()) {
-            if (entry instanceof dev.goldmensch.ast.tree.message.Message message) {
-                Message msg = new Message(message);
-                Interpolated result = msg.interpolated(Map.of("userName", "Nick"));
-//                System.out.println(message.content());
-                System.out.println(result);
-            }
-        }
-    }
 }
