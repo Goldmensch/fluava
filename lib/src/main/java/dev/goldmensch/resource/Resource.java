@@ -47,7 +47,8 @@ hello-user = Hello, {$userName}!
 shared-photos = refmsg: { hello-user.attribute-one }
     {$userName} {$photoCount ->
         [one] added a new photo
-       *[other] added {$photoCount} new photos
+        [4] add four new photos
+        *[other] added {$photoCount} new photos
     } to {$userGender ->
         [male] his stream
         [female] her stream
@@ -59,7 +60,7 @@ shared-photos = refmsg: { hello-user.attribute-one }
         dev.goldmensch.ast.tree.Resource resourceAst = new FluentParser().apply(text);
         Resource resource = new Resource(resourceAst);
         Message message = resource.message("shared-photos");
-        System.out.println(message.interpolated(Map.of("userName", "Nick")));
+        System.out.println(message.interpolated(Map.of("userName", "Nick", "photoCount", 4, "userGender", "male")));
 
     }
 }
