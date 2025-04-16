@@ -1,6 +1,6 @@
-package dev.goldmensch.ast.parsing.tree;
+package dev.goldmensch.ast.tree;
 
-import dev.goldmensch.ast.parsing.tree.entry.Entry;
+import dev.goldmensch.ast.tree.entry.Entry;
 import io.github.parseworks.FList;
 
 public record Resource(

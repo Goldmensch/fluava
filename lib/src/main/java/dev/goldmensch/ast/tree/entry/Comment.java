@@ -1,4 +1,4 @@
-package dev.goldmensch.ast.parsing.tree.entry;
+package dev.goldmensch.ast.tree.entry;
 
 public record Comment(
         Type type,

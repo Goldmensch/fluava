@@ -1,4 +1,4 @@
-package dev.goldmensch.ast.parsing.tree.pattern;
+package dev.goldmensch.ast.tree.pattern;
 
 import io.github.parseworks.FList;
 

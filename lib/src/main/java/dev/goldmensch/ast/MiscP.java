@@ -1,4 +1,4 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
 import io.github.parseworks.FList;
 import io.github.parseworks.Parser;

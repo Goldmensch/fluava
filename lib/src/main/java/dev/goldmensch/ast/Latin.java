@@ -1,4 +1,4 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
 class Latin {
     static boolean upperAlpha(char c) {

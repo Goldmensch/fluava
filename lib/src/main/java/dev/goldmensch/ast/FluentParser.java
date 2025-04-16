@@ -1,42 +1,17 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
-import dev.goldmensch.ast.parsing.tree.Resource;
-import dev.goldmensch.ast.parsing.tree.entry.Comment;
+import dev.goldmensch.ast.tree.Resource;
+import dev.goldmensch.ast.tree.entry.Comment;
 import io.github.parseworks.*;
 import io.github.parseworks.impl.Failure;
 
 import java.util.function.Function;
 
-import static dev.goldmensch.ast.parsing.EntryP.entry;
-import static dev.goldmensch.ast.parsing.MiscP.blank_block;
+import static dev.goldmensch.ast.EntryP.entry;
+import static dev.goldmensch.ast.MiscP.blank_block;
 import static io.github.parseworks.Combinators.*;
 
 public final class FluentParser implements Function<String, Resource> {
-
-    public static void main(String[] args) {
-        String text = """
-# Simple things are simple.
-hello-user = Hello, {$userName}!
-
-# Complex things are possible.
-shared-photos =
-    {$userName} {$photoCount ->
-        [one] added a new photo
-       *[other] added {$photoCount} new photos
-    } to {$userGender ->
-        [male] his stream
-        [female] her stream
-       *[other] their stream
-    }
-
-                """;
-
-        Resource res = new FluentParser().apply(text);
-        for (Resource.ResourceComponent entry : res.components()) {
-            System.out.println();
-            System.out.println(entry);
-        }
-    }
 
     // Junk
     private static final Parser<Character, String> junk_line = any(Character.class)

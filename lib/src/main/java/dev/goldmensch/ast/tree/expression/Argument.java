@@ -1,4 +1,4 @@
-package dev.goldmensch.ast.parsing.tree.expression;
+package dev.goldmensch.ast.tree.expression;
 
 public sealed interface Argument permits Argument.Named, InlineExpression {
     sealed interface NamedExpression permits InlineExpression.NumberLiteral, InlineExpression.StringLiteral {}

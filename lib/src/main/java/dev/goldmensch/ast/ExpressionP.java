@@ -1,18 +1,18 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
-import dev.goldmensch.ast.parsing.tree.expression.Argument;
-import dev.goldmensch.ast.parsing.tree.expression.InlineExpression;
-import dev.goldmensch.ast.parsing.tree.expression.SelectExpression;
-import dev.goldmensch.ast.parsing.tree.expression.Variant;
-import dev.goldmensch.ast.parsing.tree.pattern.Pattern;
+import dev.goldmensch.ast.tree.expression.Argument;
+import dev.goldmensch.ast.tree.expression.InlineExpression;
+import dev.goldmensch.ast.tree.expression.SelectExpression;
+import dev.goldmensch.ast.tree.expression.Variant;
+import dev.goldmensch.ast.tree.pattern.Pattern;
 import io.github.parseworks.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import static dev.goldmensch.ast.parsing.MiscP.*;
-import static dev.goldmensch.ast.parsing.PatternP.inline_placeable;
-import static dev.goldmensch.ast.parsing.PatternP.pattern;
+import static dev.goldmensch.ast.MiscP.*;
+import static dev.goldmensch.ast.PatternP.inline_placeable;
+import static dev.goldmensch.ast.PatternP.pattern;
 import static io.github.parseworks.Combinators.*;
 
 @SuppressWarnings("unchecked")

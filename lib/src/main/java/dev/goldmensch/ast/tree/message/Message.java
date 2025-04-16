@@ -1,7 +1,7 @@
-package dev.goldmensch.ast.parsing.tree.message;
+package dev.goldmensch.ast.tree.message;
 
-import dev.goldmensch.ast.parsing.tree.entry.Entry;
-import dev.goldmensch.ast.parsing.tree.pattern.Pattern;
+import dev.goldmensch.ast.tree.entry.Entry;
+import dev.goldmensch.ast.tree.pattern.Pattern;
 import io.github.parseworks.FList;
 
 import java.util.Optional;

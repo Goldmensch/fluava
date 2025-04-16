@@ -1,19 +1,19 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
-import dev.goldmensch.ast.parsing.tree.entry.Comment;
-import dev.goldmensch.ast.parsing.tree.entry.Entry;
-import dev.goldmensch.ast.parsing.tree.entry.Term;
-import dev.goldmensch.ast.parsing.tree.message.Attribute;
-import dev.goldmensch.ast.parsing.tree.message.Message;
-import dev.goldmensch.ast.parsing.tree.pattern.Pattern;
+import dev.goldmensch.ast.tree.entry.Comment;
+import dev.goldmensch.ast.tree.entry.Entry;
+import dev.goldmensch.ast.tree.entry.Term;
+import dev.goldmensch.ast.tree.message.Attribute;
+import dev.goldmensch.ast.tree.message.Message;
+import dev.goldmensch.ast.tree.pattern.Pattern;
 import io.github.parseworks.Pair;
 import io.github.parseworks.Parser;
 import io.github.parseworks.Utils;
 
 import java.util.Optional;
 
-import static dev.goldmensch.ast.parsing.MiscP.*;
-import static dev.goldmensch.ast.parsing.PatternP.pattern;
+import static dev.goldmensch.ast.MiscP.*;
+import static dev.goldmensch.ast.PatternP.pattern;
 import static io.github.parseworks.Combinators.*;
 
 public class EntryP {

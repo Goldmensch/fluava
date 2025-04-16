@@ -1,19 +1,18 @@
-package dev.goldmensch.ast.parsing;
+package dev.goldmensch.ast;
 
-import dev.goldmensch.ast.parsing.tree.pattern.PatternElement;
+import dev.goldmensch.ast.tree.pattern.PatternElement;
 import io.github.parseworks.*;
 
 import java.util.Collection;
 import java.util.List;
 
-import static dev.goldmensch.ast.parsing.ExpressionP.inline_expression;
-import static dev.goldmensch.ast.parsing.ExpressionP.select_expression;
-import static dev.goldmensch.ast.parsing.MiscP.*;
+import static dev.goldmensch.ast.ExpressionP.inline_expression;
+import static dev.goldmensch.ast.ExpressionP.select_expression;
+import static dev.goldmensch.ast.MiscP.*;
 import static io.github.parseworks.Combinators.*;
 
 @SuppressWarnings("unchecked")
 class PatternP {
-
 
     private record TypedPatternElement(PatternElement element, Type type) {
         private enum Type {
