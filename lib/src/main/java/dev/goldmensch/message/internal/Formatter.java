@@ -1,5 +1,6 @@
 package dev.goldmensch.message.internal;
 
+import dev.goldmensch.resource.Resource;
 import dev.goldmensch.ast.tree.expression.Argument;
 import dev.goldmensch.ast.tree.expression.InlineExpression;
 import dev.goldmensch.ast.tree.expression.SelectExpression;
@@ -16,15 +17,19 @@ public class Formatter {
     public static final Formatter EMPTY = new Formatter();
 
     private final FList<PatternElement> components;
+    private final Resource resource;
 
     private Formatter() {
         this.components = null;
+        this.resource = null;
     }
 
-    public Formatter(Pattern ast) {
+    public Formatter(Resource resource, Pattern ast) {
         Objects.requireNonNull(ast);
+        Objects.requireNonNull(resource);
 
         this.components = ast.components();
+        this.resource = resource;
     }
 
     public String apply(Map<String, Object> variables) {
