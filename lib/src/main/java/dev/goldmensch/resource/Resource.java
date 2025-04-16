@@ -30,14 +30,21 @@ public class Resource {
         return messages.get(key);
     }
 
+    public Message term(String key) {
+        return terms.get(key);
+    }
+
     public static void main(String[] args) {
         String text = """
+-term = Hi!
+    .att1 = hehe { $val }
+
 # Simple things are simple.
 hello-user = Hello, {$userName}!
-    .attribute-one = test {$userName}
+    .attribute-one = test {$userName} term: { -term.att1(val: 123232) }
 
 # Complex things are possible.
-shared-photos =
+shared-photos = refmsg: { hello-user.attribute-one }
     {$userName} {$photoCount ->
         [one] added a new photo
        *[other] added {$photoCount} new photos
@@ -51,7 +58,7 @@ shared-photos =
 
         dev.goldmensch.ast.tree.Resource resourceAst = new FluentParser().apply(text);
         Resource resource = new Resource(resourceAst);
-        Message message = resource.message("hello-user");
+        Message message = resource.message("shared-photos");
         System.out.println(message.interpolated(Map.of("userName", "Nick")));
 
     }

@@ -1,5 +1,6 @@
 package dev.goldmensch.message.internal;
 
+import dev.goldmensch.message.Message;
 import dev.goldmensch.resource.Resource;
 import dev.goldmensch.ast.tree.expression.Argument;
 import dev.goldmensch.ast.tree.expression.InlineExpression;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Formatter {
     public static final Formatter EMPTY = new Formatter();
@@ -77,10 +79,27 @@ public class Formatter {
                 builder.append("FUNCTION_CALL(ID: %s | ARGS: %s)".formatted(id, arguments));
             }
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {
-                builder.append("MESSAGE_REF(ID: %s | ATTRIBUTES: %s)".formatted(id, attribute.orElse(null)));
+                Message.Interpolated refMsg = resource.message(id).interpolated(task.variables());
+                String referenceContent = attribute
+                        .map(termId -> refMsg.attributes().get(termId))
+                        .orElse(refMsg.value());
+
+                builder.append(referenceContent);
             }
             case InlineExpression.TermReference(String id, Optional<String> attribute, FList<Argument> arguments) -> {
-                builder.append("TERM_REF(ID: %s | ATTRIBUTES: %s | ARGS: %s)".formatted(id, attribute.orElse(null), attribute));
+                Map<String, Object> resolvedArguments = arguments.stream()
+                        .map(Argument.Named.class::cast)
+                        .collect(Collectors.toMap(Argument.Named::name, named -> switch (named.expression()) {
+                          case InlineExpression.StringLiteral(String value) -> value;
+                          case InlineExpression.NumberLiteral(double value)  -> value;
+                        }));
+
+                Message.Interpolated refTerm = resource.term(id).interpolated(resolvedArguments);
+                String referenceContent = attribute
+                        .map(termId -> refTerm.attributes().get(termId))
+                        .orElse(refTerm.value());
+
+                builder.append(referenceContent);
             }
         }
     }
