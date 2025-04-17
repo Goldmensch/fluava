@@ -3,6 +3,7 @@ package dev.goldmensch.resource;
 import dev.goldmensch.ast.FluentParser;
 import dev.goldmensch.ast.tree.entry.Term;
 import dev.goldmensch.function.Functions;
+import dev.goldmensch.function.Partial;
 import dev.goldmensch.message.Message;
 
 import java.util.Locale;
@@ -37,32 +38,17 @@ public class Resource {
 
     public static void main(String[] args) {
         String text = """
--term = Hi!
-    .att1 = hehe { NUMBER($val, test: "hehe") }
-
-# Simple things are simple.
-hello-user = Hello, {$userName}!
-    .attribute-one = test {$userName} term: { -term.att1(val: 123232) }
-
-# Complex things are possible.
-shared-photos = refmsg: { hello-user.attribute-one }
-    {$userName} {$photoCount ->
-        [one] added a new photo
-        [few] added two new photos
-        [4] add four new photos
-        *[other] added {$photoCount} new photos
-    } to {$userGender ->
-        [male] his stream
-        [female] her stream
-       *[other] their stream
-    }
-
+                info = The price is { NUMBER($price, currencyDisplay: "name") }
+                test = The number is { $num }
                 """;
 
         dev.goldmensch.ast.tree.Resource resourceAst = new FluentParser().apply(text);
         Resource resource = new Resource(new Functions(Map.of()), Locale.of("uk"), resourceAst);
-        Message message = resource.message("shared-photos");
-        System.out.println(message.interpolated(Map.of("userName", "Nick", "photoCount", 34, "userGender", "male")));
+        Message message = resource.message("info");
+        System.out.println(message.interpolated(Map.of(
+                "price", new Partial(12, Map.of("NUMBER", Map.of("style", "currency", "currency", "USD"))),
+                "num", 12)
+        ));
 
     }
 }

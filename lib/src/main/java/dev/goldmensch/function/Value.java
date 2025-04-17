@@ -6,7 +6,7 @@ public sealed interface Value<T> {
     String stringValue();
     T value();
 
-    record Variable(Object value) implements Value<Object> {
+    record Raw(Object value) implements Value<Object> {
         @Override
         public String stringValue() {
             throw new UnsupportedOperationException("Must be converted to string/number by a function call!");

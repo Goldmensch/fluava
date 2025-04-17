@@ -7,13 +7,18 @@ import dev.goldmensch.function.Value;
 import java.util.Map;
 
 public class StringFunction implements Function<String> {
-    @Override
-    public Value.Result<String> apply(Context context, Value<?> argument, Map<String, Value<?>> arguments) {
 
-        if (argument.value() instanceof String string) {
+    @Override
+    public Value.Result<String> apply(Context context, Object positional, Map<String, Object> named) {
+        if (positional instanceof String string) {
             return new Value.Text(string);
         }
 
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, ParameterType> allowedParameter() {
+        return Map.of();
     }
 }

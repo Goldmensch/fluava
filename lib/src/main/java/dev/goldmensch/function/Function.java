@@ -3,5 +3,11 @@ package dev.goldmensch.function;
 import java.util.Map;
 
 public interface Function<T> {
-    Value.Result<T> apply(Context context, Value<?> argument, Map<String, Value<?>> arguments);
+    Value.Result<T> apply(Context context, Object positional, Map<String, Object> named);
+    Map<String, ParameterType> allowedParameter();
+
+    enum ParameterType {
+        DEVELOPER,
+        UNIVERSAL
+    }
 }

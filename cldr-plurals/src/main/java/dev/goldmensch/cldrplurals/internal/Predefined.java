@@ -7,7 +7,7 @@ public class Predefined {
     private String[] parts(String value) {
         String normValue = norm(value);
         var parts = normValue.split("[.]");
-        if (parts.length == 1 || parts[1].equals("0".repeat(parts[1].length()))) return new String[] { normValue, "" };
+        if (parts.length == 1 || parts[1].equals("0".repeat(parts[1].length()))) return new String[] { parts[0], "" };
         return parts;
     }
 

@@ -32,13 +32,9 @@ public class Formatter {
     }
 
     public Formatter(Functions functions, Resource resource, Pattern ast) {
-        Objects.requireNonNull(ast);
-        Objects.requireNonNull(resource);
-        Objects.requireNonNull(functions);
-
-        this.functions = functions;
-        this.components = ast.components();
-        this.resource = resource;
+        this.functions = Objects.requireNonNull(functions);
+        this.components = Objects.requireNonNull(ast).components();
+        this.resource = Objects.requireNonNull(resource);
     }
 
     public String apply(Locale locale, Map<String, Object> variables) {
@@ -68,7 +64,7 @@ public class Formatter {
     }
 
     private void addSelect(Task task, SelectExpression expression) {
-        Value<?> selector = computeExpression(task, expression.expression());
+        Value<?> selector = computeExpression(task, expression.expression(), true);
 
         switch (selector) {
             case Value.Text(String computedValue) -> {
@@ -108,39 +104,33 @@ public class Formatter {
 
     private void addInlineExpression(Task task, InlineExpression expression) {
         StringBuilder builder = task.builder();
-        Value<?> computed = computeExpression(task, expression);
+        Value<?> computed = computeExpression(task, expression, true);
         builder.append(computed.stringValue());
     }
 
-    private Value<?> computeExpression(Task task, InlineExpression expression) {
+    private Value<?> computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
         return switch (expression) {
             case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
             case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseThrow();
             case InlineExpression.VariableReference(String id) -> {
                 Object placeholder = task.variables().get(id);
+                if (!implicitResolve) yield new Value.Raw(placeholder);
 
                 yield functions.tryImplicit(task.locale(), placeholder)
                         .map(Value.class::cast)
-                        .orElseGet(() -> new Value.Variable(placeholder));
+                        .orElseGet(() -> new Value.Raw(placeholder));
             }
 
             case InlineExpression.FunctionalReference(String id, List<Argument> arguments) -> {
-                Value<?> positional = arguments.stream()
+                Object positional = arguments.stream()
                         .filter(InlineExpression.class::isInstance)
                         .map(InlineExpression.class::cast)
-                        .map(expr -> computeExpression(task, expr))
+                        .map(expr -> computeExpression(task, expr, false)) // don't resolve variables implicit, keep user defined object
                         .findAny()
+                        .map(Value::value)
                         .orElseThrow();
 
-                Map<String, Value<?>> named = arguments.stream()
-                        .filter(Argument.Named.class::isInstance)
-                        .map(Argument.Named.class::cast)
-                        .collect(Collectors.toMap(Argument.Named::name, arg -> switch (arg.expression()) {
-                            case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
-                            case InlineExpression.NumberLiteral(double  value) -> new Value.Number(String.valueOf(value), value);
-                        }));
-
-                yield functions.call(task.locale(), id, positional, named);
+                yield functions.call(task.locale(), id, positional, resolveArguments(arguments));
             }
 
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {
@@ -153,14 +143,7 @@ public class Formatter {
             }
 
             case InlineExpression.TermReference(String id, Optional<String> attribute, FList<Argument> arguments) -> {
-                Map<String, Object> resolvedArguments = arguments.stream()
-                        .map(Argument.Named.class::cast)
-                        .collect(Collectors.toMap(Argument.Named::name, named -> switch (named.expression()) {
-                            case InlineExpression.StringLiteral(String value) -> value;
-                            case InlineExpression.NumberLiteral(double value) -> value;
-                        }));
-
-                Message.Interpolated refTerm = resource.term(id).interpolated(resolvedArguments);
+                Message.Interpolated refTerm = resource.term(id).interpolated(resolveArguments(arguments));
                 String referenceContent = attribute
                         .map(termId -> refTerm.attributes().get(termId))
                         .orElse(refTerm.value());
@@ -168,5 +151,15 @@ public class Formatter {
                 yield new Value.Text(referenceContent);
             }
         };
+    }
+
+    private Map<String, Object> resolveArguments(List<Argument> arguments) {
+        return arguments.stream()
+                .filter(Argument.Named.class::isInstance)
+                .map(Argument.Named.class::cast)
+                .collect(Collectors.toMap(Argument.Named::name, named -> switch (named.expression()) {
+                    case InlineExpression.StringLiteral(String value) -> value;
+                    case InlineExpression.NumberLiteral(double value) -> value;
+                }));
     }
 }
