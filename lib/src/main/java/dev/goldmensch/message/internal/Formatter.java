@@ -64,7 +64,7 @@ public class Formatter {
     }
 
     private void addSelect(Task task, SelectExpression expression) {
-        Value<?> selector = computeExpression(task, expression.expression(), true);
+        Value selector = computeExpression(task, expression.expression(), true);
 
         switch (selector) {
             case Value.Text(String computedValue) -> {
@@ -104,11 +104,11 @@ public class Formatter {
 
     private void addInlineExpression(Task task, InlineExpression expression) {
         StringBuilder builder = task.builder();
-        Value<?> computed = computeExpression(task, expression, true);
+        Value computed = computeExpression(task, expression, true);
         builder.append(computed.stringValue());
     }
 
-    private Value<?> computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
+    private Value computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
         return switch (expression) {
             case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
             case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseThrow();

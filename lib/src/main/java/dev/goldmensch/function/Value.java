@@ -1,21 +1,21 @@
 package dev.goldmensch.function;
 
-public sealed interface Value<T> {
-    sealed interface Result<T> extends Value<T> {}
+public sealed interface Value {
+    sealed interface Result extends Value {}
 
     String stringValue();
-    T value();
+    Object value();
 
-    record Raw(Object value) implements Value<Object> {
+    record Raw(Object value) implements Value {
         @Override
         public String stringValue() {
             throw new UnsupportedOperationException("Must be converted to string/number by a function call!");
         }
     }
 
-    record Number(String stringValue, Double value) implements Result<Double> {}
+    record Number(String stringValue, Double value) implements Result {}
 
-    record Text(String stringValue) implements Result<String> {
+    record Text(String stringValue) implements Result {
         @Override
         public String value() {
             return stringValue;

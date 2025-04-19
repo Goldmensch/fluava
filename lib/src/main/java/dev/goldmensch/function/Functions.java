@@ -1,8 +1,11 @@
 package dev.goldmensch.function;
 
+import dev.goldmensch.function.builtin.DatetimeFunction;
 import dev.goldmensch.function.builtin.NumberFunction;
 import dev.goldmensch.function.builtin.StringFunction;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -16,9 +19,10 @@ public class Functions {
 
         this.functions.computeIfAbsent(Defaults.NUMBER.name(), __ -> new NumberFunction());
         this.functions.computeIfAbsent(Defaults.STRING.name(), __ -> new StringFunction());
+        this.functions.computeIfAbsent(Defaults.DATETIME.name(), __ -> new DatetimeFunction());
     }
 
-    public Optional<Value<?>> tryImplicit(Locale locale, Object value) {
+    public Optional<Value> tryImplicit(Locale locale, Object value) {
         Object realValue = value instanceof Partial(Object raw, var __)
                 ? raw
                 : value;
@@ -26,15 +30,17 @@ public class Functions {
         Defaults func = switch (realValue) {
             case Number __ -> Defaults.NUMBER;
             case String __ -> Defaults.STRING;
+            case ZonedDateTime __ -> Defaults.DATETIME;
+            case LocalDateTime __ -> Defaults.DATETIME;
             default -> null;
         };
         if (func == null) return Optional.empty();
 
-        Value.Result<?> result = call(locale, func.name(), value, Map.of());
+        Value.Result result = call(locale, func.name(), value, Map.of());
         return Optional.of(result);
     }
 
-    public Value.Result<?> call(Locale locale, String name, Object positional, Map<String, Object> named) {
+    public Value.Result call(Locale locale, String name, Object positional, Map<String, Object> named) {
         Function<?> function = functions.get(name);
         Map<String, Function.ParameterType> allowedParameters = function.allowedParameter();
 
@@ -71,7 +77,8 @@ public class Functions {
 
     public enum Defaults {
         NUMBER,
-        STRING
+        STRING,
+        DATETIME
     }
 
 

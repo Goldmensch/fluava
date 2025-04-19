@@ -11,10 +11,10 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
 
-public class NumberFunction implements Function<Double> {
+public class NumberFunction implements Function<Value.Number> {
 
     @Override
-    public Value.Result<Double> apply(Context context, Object positional, Map<String, Object> named) {
+    public Value.Number apply(Context context, Object positional, Map<String, Object> named) {
         if (positional instanceof Number number) {
             double value = number.doubleValue();
 

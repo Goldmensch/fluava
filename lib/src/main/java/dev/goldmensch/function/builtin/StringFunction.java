@@ -6,10 +6,10 @@ import dev.goldmensch.function.Value;
 
 import java.util.Map;
 
-public class StringFunction implements Function<String> {
+public class StringFunction implements Function<Value.Text> {
 
     @Override
-    public Value.Result<String> apply(Context context, Object positional, Map<String, Object> named) {
+    public Value.Text apply(Context context, Object positional, Map<String, Object> named) {
         if (positional instanceof String string) {
             return new Value.Text(string);
         }
