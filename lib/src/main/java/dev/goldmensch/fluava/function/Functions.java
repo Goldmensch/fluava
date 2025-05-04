@@ -15,21 +15,33 @@ public class Functions {
     private static final String RAW = "RAW";
     private static final String DATETIME = "DATETIME";
 
-    private final Set<FluavaType<?>> types = Set.of(
-            new FluavaType<>(Number.class, NUMBER),
-            new FluavaType<>(String.class, RAW),
-            new FluavaType<>(ZonedDateTime.class, DATETIME),
-            new FluavaType<>(LocalDateTime.class, DATETIME)
-    );
+    private final Map<Class<?>, FluavaType<?>> types = new HashMap<>();
     private final Map<String, Function<?>> functions;
 
-    public Functions(Map<String, Function<?>> functions) {
+    public Functions(Map<String, Function<?>> functions, Set<FluavaType<?>> types) {
         this.functions = new HashMap<>(functions);
+        addTypes(types);
 
-        this.functions.computeIfAbsent(NUMBER, _ -> new NumberFunction());
-        this.functions.computeIfAbsent(RAW, _ -> new RawFunction());
-        this.functions.computeIfAbsent(DATETIME, _ -> new DatetimeFunction());
+
+        // default types and functions
+        addTypes(Set.of(
+                new FluavaType<>(Number.class, NUMBER),
+                new FluavaType<>(String.class, RAW),
+                new FluavaType<>(ZonedDateTime.class, DATETIME),
+                new FluavaType<>(LocalDateTime.class, DATETIME)
+        ));
+
+        this.functions.putIfAbsent(NUMBER, new NumberFunction());
+        this.functions.putIfAbsent(RAW, new RawFunction());
+        this.functions.putIfAbsent(DATETIME, new DatetimeFunction());
     }
+
+    private void addTypes(Set<FluavaType<?>> types) {
+        for (FluavaType<?> type : types) {
+            this.types.putIfAbsent(type.acceptableType(), type);
+        }
+    }
+
 
     public Optional<Value> tryImplicit(Locale locale, Object value) {
         Object actualValue = value instanceof Partial(Object wrapped, var _)
@@ -52,7 +64,7 @@ public class Functions {
             if (value == null || !value.type().defaultFunction().equals(name)) break outer;
 
             Map<String, Object> params = resolveParams(positional.getFirst(), named);
-            function.apply(context, List.of(wrapped), params);
+            return function.apply(context, List.of(wrapped), params);
         }
 
         return function.apply(context, positional, named);
@@ -61,7 +73,7 @@ public class Functions {
     // entry point for proteus
     @SuppressWarnings({"rawtypes", "unchecked"})
     private FluavaValue<?> toFluavaValue(Object value) {
-        FluavaType type = types.stream()
+        FluavaType type = types.values().stream()
                 .filter(fluavaType -> fluavaType.acceptableType().isInstance(value))
                 .findFirst()
                 .orElse(null);
@@ -74,8 +86,8 @@ public class Functions {
         if (value instanceof Partial(var _, Map<String, Object> defaultParams)) {
             if (defaultParams == null || defaultParams.isEmpty()) return named;
 
-            HashMap<String, Object> copy = new HashMap<>(defaultParams);
-            copy.putAll(named);
+            HashMap<String, Object> copy = new HashMap<>(named);
+            copy.putAll(defaultParams);
             return copy;
         }
         return named;
