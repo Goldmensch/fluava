@@ -3,79 +3,81 @@ package dev.goldmensch.fluava.function;
 import dev.goldmensch.fluava.function.builtin.DatetimeFunction;
 import dev.goldmensch.fluava.function.builtin.NumberFunction;
 import dev.goldmensch.fluava.function.builtin.RawFunction;
+import dev.goldmensch.fluava.function.type.FluavaType;
+import dev.goldmensch.fluava.function.type.FluavaValue;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Functions {
     private static final String NUMBER = "NUMBER";
     private static final String RAW = "RAW";
     private static final String DATETIME = "DATETIME";
 
+    private final Set<FluavaType<?>> types = Set.of(
+            new FluavaType<>(Number.class, NUMBER),
+            new FluavaType<>(String.class, RAW),
+            new FluavaType<>(ZonedDateTime.class, DATETIME),
+            new FluavaType<>(LocalDateTime.class, DATETIME)
+    );
     private final Map<String, Function<?>> functions;
 
     public Functions(Map<String, Function<?>> functions) {
         this.functions = new HashMap<>(functions);
 
-        this.functions.computeIfAbsent(NUMBER, __ -> new NumberFunction());
-        this.functions.computeIfAbsent(RAW, __ -> new RawFunction());
-        this.functions.computeIfAbsent(DATETIME, __ -> new DatetimeFunction());
+        this.functions.computeIfAbsent(NUMBER, _ -> new NumberFunction());
+        this.functions.computeIfAbsent(RAW, _ -> new RawFunction());
+        this.functions.computeIfAbsent(DATETIME, _ -> new DatetimeFunction());
     }
 
     public Optional<Value> tryImplicit(Locale locale, Object value) {
-        Object realValue = value instanceof Partial(Object raw, var __)
-                ? raw
+        Object actualValue = value instanceof Partial(Object wrapped, var _)
+                ? wrapped
                 : value;
 
-        String func = switch (realValue) {
-            case Number __ -> NUMBER;
-            case CharSequence __ -> RAW;
-            case ZonedDateTime __ -> DATETIME;
-            case LocalDateTime __ -> DATETIME;
-            default -> null;
-        };
-        if (func == null) return Optional.empty();
+        FluavaValue<?> fluavaValue = toFluavaValue(actualValue);
+        if (fluavaValue == null) return Optional.empty();
 
-        Value.Result result = call(locale, func, value, Map.of());
+        Value.Result result = call(locale, fluavaValue.type().defaultFunction(), List.of(fluavaValue.value()), resolveParams(value, Map.of()));
         return Optional.of(result);
     }
 
-    public Value.Result call(Locale locale, String name, Object positional, Map<String, Object> named) {
+    public Value.Result call(Locale locale, String name, List<Object> positional, Map<String, Object> named) {
         Function<?> function = functions.get(name);
-        Map<String, Function.ParameterType> allowedParameters = function.allowedParameter();
+        Context context = new Context(locale);
 
-        // check if localizer provided developer parameter
-        named.forEach((key, value) -> {
-            Function.ParameterType parameterType = allowedParameters.get(key);
-            if (parameterType == Function.ParameterType.DEVELOPER) throw new IllegalArgumentException("Parameter %s is a developer parameter!".formatted(key));
-        });
+        outer: if (positional.size() == 1 && positional.getFirst() instanceof Partial(Object wrapped, var _)) {
+            FluavaValue<?> value = toFluavaValue(wrapped);
+            if (value == null || !value.type().defaultFunction().equals(name)) break outer;
 
-        Map.Entry<Object, Map<String, Object>> resolved = resolvePartial(name, positional, named);
-
-        // check if all provided parameters are allowed
-        named.forEach((key, value) -> {
-            Function.ParameterType parameterType = allowedParameters.get(key);
-            if (parameterType == null) throw new IllegalArgumentException("Parameter %s unsupported on function %s".formatted(key, name));
-        });
-
-        return function.apply(new Context(locale), resolved.getKey(), resolved.getValue());
-    }
-
-    private Map.Entry<Object, Map<String, Object>> resolvePartial(String id, Object value, Map<String, Object> named) {
-        partial_check: if (value instanceof Partial(Object raw, Map<String, Map<String, Object>> defaultParameters)) {
-            Map<String, Object> params = defaultParameters.get(id);
-            if (params == null) break partial_check;
-
-            HashMap<String, Object> copy = new HashMap<>(named);
-            params.keySet().forEach(key -> copy.putIfAbsent(key, params.get(key)));
-
-            return Map.entry(raw, copy);
+            Map<String, Object> params = resolveParams(positional.getFirst(), named);
+            function.apply(context, List.of(wrapped), params);
         }
 
-        return Map.entry(value, named);
+        return function.apply(context, positional, named);
+    }
+
+    // entry point for proteus
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private FluavaValue<?> toFluavaValue(Object value) {
+        FluavaType type = types.stream()
+                .filter(fluavaType -> fluavaType.acceptableType().isInstance(value))
+                .findFirst()
+                .orElse(null);
+        if (type == null) return null;
+
+        return new FluavaValue<>(value, type);
+    }
+
+    private Map<String, Object> resolveParams(Object value, Map<String, Object> named) {
+        if (value instanceof Partial(var _, Map<String, Object> defaultParams)) {
+            if (defaultParams == null || defaultParams.isEmpty()) return named;
+
+            HashMap<String, Object> copy = new HashMap<>(defaultParams);
+            copy.putAll(named);
+            return copy;
+        }
+        return named;
     }
 }

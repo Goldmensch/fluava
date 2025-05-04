@@ -1,5 +1,5 @@
 module dev.goldmensch.cldrplurals {
     exports dev.goldmensch.cldrplurals;
 
-    uses RulesProvider;
+    uses dev.goldmensch.cldrplurals.RulesProvider;
 }

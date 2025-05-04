@@ -13,7 +13,6 @@ import java.util.function.BiFunction;
 
 public class IntlDateTimeFormatter {
 
-
     public static String format(Locale locale, ZonedDateTime time, Map<String, String> overrides) {
         String baseFormat = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.FULL, FormatStyle.FULL, Chronology.ofLocale(locale), locale);
         List<String> parts = parts(baseFormat);

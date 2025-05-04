@@ -8,14 +8,15 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class NumberFunction implements Function<Value.Number> {
 
     @Override
-    public Value.Number apply(Context context, Object positional, Map<String, Object> named) {
-        if (positional instanceof Number number) {
+    public Value.Number apply(Context context, List<Object> positional, Map<String, Object> named) {
+        if (positional.getFirst() instanceof Number number) {
             double value = number.doubleValue();
 
             Locale locale = context.locale();
@@ -53,21 +54,5 @@ public class NumberFunction implements Function<Value.Number> {
         }
 
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, ParameterType> allowedParameter() {
-        return Map.of(
-                "style", ParameterType.DEVELOPER,
-                "currency", ParameterType.DEVELOPER,
-                "currencyDisplay", ParameterType.UNIVERSAL,
-                "useGrouping", ParameterType.UNIVERSAL,
-                "minimumIntegerDigits", ParameterType.UNIVERSAL,
-                "minimumFractionDigits", ParameterType.UNIVERSAL,
-                "maximumFractionDigits", ParameterType.UNIVERSAL
-
-
-
-        );
     }
 }

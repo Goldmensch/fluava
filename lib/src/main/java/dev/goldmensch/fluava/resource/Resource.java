@@ -39,17 +39,17 @@ public class Resource {
 
     public static void main(String[] args) {
         String text = """
-                info = The price is { NUMBER($price, currencyDisplay: "name") }
+                info = The price is { NUMBER($price, currencyDisplay: "name", style: "currency", currency: "USD") }
                 test = The number is { $num }
                 date = Today is { DATETIME($date, hour12: "false", weekday: "short", timeZoneName: "short") }
                 """;
 
         dev.goldmensch.fluava.ast.tree.Resource resourceAst = new FluentParser().apply(text);
         Resource resource = new Resource(new Functions(Map.of()), Locale.of("DE"), resourceAst);
-        dev.goldmensch.fluava.message.Message message = resource.message("info");
+        dev.goldmensch.fluava.message.Message message = resource.message("test");
         System.out.println(message.interpolated(Map.of(
-                "price", new Partial(12, Map.of("NUMBER", Map.of("style", "currency", "currency", "USD"))),
-                "num", 12,
+                "price", 12,
+                "num", new Partial(12, Map.of("style", "currency", "currency", "EUR")),
                 "date", LocalDateTime.now()
                 )
         ));

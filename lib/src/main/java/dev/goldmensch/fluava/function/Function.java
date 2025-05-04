@@ -1,13 +1,8 @@
 package dev.goldmensch.fluava.function;
 
+import java.util.List;
 import java.util.Map;
 
-public interface Function<T extends Value.Result> {
-    T apply(Context context, Object positional, Map<String, Object> named);
-    Map<String, ParameterType> allowedParameter();
-
-    enum ParameterType {
-        DEVELOPER,
-        UNIVERSAL
-    }
+public interface Function<R extends Value.Result> {
+    R apply(Context context, List<Object> positional, Map<String, Object> named);
 }

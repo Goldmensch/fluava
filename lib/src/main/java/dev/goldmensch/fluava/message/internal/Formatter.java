@@ -1,14 +1,14 @@
 package dev.goldmensch.fluava.message.internal;
 
+import dev.goldmensch.cldrplurals.PluralCategory;
+import dev.goldmensch.cldrplurals.Plurals;
+import dev.goldmensch.cldrplurals.Type;
 import dev.goldmensch.fluava.ast.tree.expression.Argument;
 import dev.goldmensch.fluava.ast.tree.expression.InlineExpression;
 import dev.goldmensch.fluava.ast.tree.expression.SelectExpression;
 import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
-import dev.goldmensch.cldrplurals.PluralCategory;
-import dev.goldmensch.cldrplurals.Plurals;
-import dev.goldmensch.cldrplurals.Type;
 import dev.goldmensch.fluava.function.Functions;
 import dev.goldmensch.fluava.function.Value;
 import dev.goldmensch.fluava.message.Message;
@@ -123,15 +123,14 @@ public class Formatter {
             }
 
             case InlineExpression.FunctionalReference(String id, List<Argument> arguments) -> {
-                Object positional = arguments.stream()
+                List<Object> positional = arguments.stream()
                         .filter(InlineExpression.class::isInstance)
                         .map(InlineExpression.class::cast)
                         .map(expr -> computeExpression(task, expr, false)) // don't resolve variables implicit, keep user defined object
-                        .findAny()
                         .map(Value::value)
-                        .orElseThrow();
+                        .toList();
 
-                yield functions.call(task.locale(), id, positional, resolveArguments(arguments));
+                yield functions.call(task.locale(), id, positional, resolveNamedArguments(arguments));
             }
 
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {
@@ -144,7 +143,7 @@ public class Formatter {
             }
 
             case InlineExpression.TermReference(String id, Optional<String> attribute, FList<Argument> arguments) -> {
-                Message.Interpolated refTerm = resource.term(id).interpolated(resolveArguments(arguments));
+                Message.Interpolated refTerm = resource.term(id).interpolated(resolveNamedArguments(arguments));
                 String referenceContent = attribute
                         .map(termId -> refTerm.attributes().get(termId))
                         .orElse(refTerm.value());
@@ -154,7 +153,7 @@ public class Formatter {
         };
     }
 
-    private Map<String, Object> resolveArguments(List<Argument> arguments) {
+    private Map<String, Object> resolveNamedArguments(List<Argument> arguments) {
         return arguments.stream()
                 .filter(Argument.Named.class::isInstance)
                 .map(Argument.Named.class::cast)
