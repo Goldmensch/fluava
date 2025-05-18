@@ -46,7 +46,7 @@ public class Resource {
 
         dev.goldmensch.fluava.ast.tree.Resource resourceAst = new FluentParser().apply(text);
         Resource resource = new Resource(new Functions(Map.of()), Locale.of("DE"), resourceAst);
-        dev.goldmensch.fluava.message.Message message = resource.message("test");
+        dev.goldmensch.fluava.message.Message message = resource.message("info");
         System.out.println(message.interpolated(Map.of(
                 "price", 12,
                 "num", new Partial(12, Map.of("style", "currency", "currency", "EUR")),

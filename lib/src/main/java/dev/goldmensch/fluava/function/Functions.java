@@ -24,7 +24,7 @@ public class Functions {
         this.functions.putIfAbsent(DATETIME, new DatetimeFunction());
     }
 
-    record Adapted<T>(T value, Function<?, T> defaultFunction) {}
+    record Adapted<T>(T value, Function.Implicit<?, T> defaultFunction) {}
 
     public Optional<Value> tryImplicit(Locale locale, Object value) {
         Object actualValue = value instanceof Partial(Object wrapped, var _)
@@ -32,17 +32,13 @@ public class Functions {
                 : value;
 
         return findImplicit(actualValue)
-                .map(adapted -> call(locale, adapted.defaultFunction(), List.of(adapted.value()), resolveParams(value, Map.of())));
+                .map(adapted -> adapted.defaultFunction.apply(new Context(locale), adapted.value, new Options(resolveParams(value, Map.of()))));
     }
 
     @SuppressWarnings("unchecked")
     public  <T> Value.Result call(Locale locale, String funcName, List<? extends T> positional, final Map<String, Object> named) {
         Function<?, T> function = (Function<?, T>) functions.get(funcName);
 
-        return call(locale, function, positional, named);
-    }
-
-    private <T> Value.Result call(Locale locale, Function<?, T> function, List<? extends T> positional, final Map<String, Object> named) {
         Context context = new Context(locale);
 
         Map<String, Object> resolvedNamed = named;
@@ -53,7 +49,7 @@ public class Functions {
                     .orElse(named);
         }
 
-        return function.apply(context, positional, new Options(resolvedNamed));
+        return function.apply(context, new Arguments<>(positional), new Options(resolvedNamed));
     }
 
     private Map<String, Object> resolveParams(Object value, Map<String, Object> named) {
