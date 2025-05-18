@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":cldr-plurals"))
     implementation("io.github.parseworks:parseworks:0.1.1")
 
-    implementation("io.github.kaktushose:proteus:0.1.1")
+    implementation("io.github.kaktushose:proteus:0.1.2")
 }
 
 testing {

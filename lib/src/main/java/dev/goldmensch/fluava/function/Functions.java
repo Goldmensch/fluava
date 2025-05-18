@@ -53,7 +53,7 @@ public class Functions {
                     .orElse(named);
         }
 
-        return function.apply(context, positional, resolvedNamed);
+        return function.apply(context, positional, new Options(resolvedNamed));
     }
 
     private Map<String, Object> resolveParams(Object value, Map<String, Object> named) {

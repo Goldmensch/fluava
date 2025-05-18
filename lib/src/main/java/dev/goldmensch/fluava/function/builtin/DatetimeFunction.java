@@ -2,6 +2,7 @@ package dev.goldmensch.fluava.function.builtin;
 
 import dev.goldmensch.fluava.function.Context;
 import dev.goldmensch.fluava.function.Function;
+import dev.goldmensch.fluava.function.Options;
 import dev.goldmensch.fluava.function.Value;
 import dev.goldmensch.fluava.function.internal.IntlDateTimeFormatter;
 
@@ -19,20 +20,20 @@ import java.util.stream.Collectors;
 public class DatetimeFunction implements Function.Implicit<Value.Text, Temporal> {
 
     @Override
-    public Value.Text apply(Context context, Temporal value, Map<String, Object> named) {
+    public Value.Text apply(Context context, Temporal value, Options options) {
         ZonedDateTime time = switch (value) {
             case ZonedDateTime zT -> zT;
             case LocalDateTime local -> {
-                String id = (String) named.getOrDefault("timeZone", TimeZone.getDefault().getID());
+                String id = options.get("timeZone", String.class, TimeZone.getDefault().getID());
                 yield ZonedDateTime.of(local, ZoneId.of(id));
             }
 
             default -> throw new UnsupportedOperationException();
         };
 
-        Map<String, String> parameters = named.entrySet()
+        Map<String, String> parameters = options.entries()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, a -> (String) a.getValue()));
+                .collect(Collectors.toMap(Options.Entry::key, a -> a.as(String.class)));
 
         String formatted = IntlDateTimeFormatter.format(context.locale(), time, parameters);
 
