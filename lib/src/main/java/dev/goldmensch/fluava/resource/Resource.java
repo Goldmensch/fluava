@@ -39,7 +39,7 @@ public class Resource {
 
     public static void main(String[] args) {
         String text = """
-                info = The price is { NUMBER($price, currencyDisplay: "name", style: "currency", currency: "USD") }
+                info = The price is { NUMBER($price, currencyDisplay: "name", style: "currency", currency: "USD", minimumIntegerDigits: 1) }
                 test = The number is { $num }
                 date = Today is { DATETIME($date, hour12: "false", weekday: "short", timeZoneName: "short") }
                 """;
@@ -53,6 +53,5 @@ public class Resource {
                 "date", LocalDateTime.now()
                 )
         ));
-
     }
 }

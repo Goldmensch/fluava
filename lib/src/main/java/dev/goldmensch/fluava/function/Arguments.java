@@ -14,13 +14,13 @@ public class Arguments<R> {
         this.positional = positional;
     }
 
-    protected  <T> Optional<T> tryGet(int number, Class<T> klass) {
-        R raw = positional.get(number);
+    protected <T> Optional<T> tryGet(int index, Class<T> klass) {
+        R raw = positional.get(index);
         ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(klass));
 
         return switch (result) {
             case ConversionResult.Success(T val) -> Optional.of(val);
-            case ConversionResult.Failure<?> failure -> Optional.empty();
+            case ConversionResult.Failure<?> _ -> Optional.empty();
         };
     }
 
