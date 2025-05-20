@@ -1,6 +1,7 @@
 package dev.goldmensch.fluava.message;
 
 import dev.goldmensch.fluava.ast.tree.entry.Term;
+import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.ast.tree.message.Attribute;
 import dev.goldmensch.fluava.function.Functions;
 import dev.goldmensch.fluava.message.internal.Formatter;
@@ -23,7 +24,7 @@ public class Message {
         this.attributeFormatters = null;
     }
 
-    public Message(Functions functions, Locale locale, Resource leakingResource, dev.goldmensch.fluava.ast.tree.message.Message astMessage) {
+    public Message(Functions functions, Locale locale, Resource leakingResource, AstMessage astMessage) {
         this.key = astMessage.id();
         this.locale = Objects.requireNonNull(locale);
         this.contentFormatter = astMessage.content()

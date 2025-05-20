@@ -4,7 +4,7 @@ import dev.goldmensch.fluava.ast.tree.entry.Comment;
 import dev.goldmensch.fluava.ast.tree.entry.Entry;
 import dev.goldmensch.fluava.ast.tree.entry.Term;
 import dev.goldmensch.fluava.ast.tree.message.Attribute;
-import dev.goldmensch.fluava.ast.tree.message.Message;
+import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import io.github.parseworks.Pair;
 import io.github.parseworks.Parser;
@@ -18,7 +18,7 @@ import static io.github.parseworks.Combinators.*;
 
 public class EntryP {
 
-    // Message
+    // AstMessage
     private static final Parser<Character, Attribute> attribute = line_end
             .skipThen(blank.optional())
             .skipThen(chr('.'))
@@ -37,7 +37,7 @@ public class EntryP {
                     pattern.map(Pattern::new).then(attribute.zeroOrMany()).map(Pair::new),
                     Parser.<Character, Pattern>pure(null).then(attribute.many()).map(Pair::new)
             ))
-            .map(identifier -> content -> new Message(identifier, Optional.ofNullable(content.left()), content.right()));
+            .map(identifier -> content -> new AstMessage(identifier, Optional.ofNullable(content.left()), content.right()));
 
     // Term
     private static final Parser<Character, Entry> term = chr('-')

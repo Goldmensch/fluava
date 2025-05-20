@@ -1,5 +1,7 @@
 package dev.goldmensch.fluava.resource;
 
+import dev.goldmensch.fluava.ast.tree.AstResource;
+import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.function.Functions;
 import dev.goldmensch.fluava.message.Message;
 
@@ -11,7 +13,7 @@ public class Resource {
     private final Map<String, Message> messages;
     private final Map<String, Message> terms;
 
-    public Resource(Functions functions, Locale locale, dev.goldmensch.fluava.ast.tree.Resource resource) {
+    public Resource(Functions functions, Locale locale, AstResource resource) {
         this.terms = resource.components()
                 .stream()
                 .filter(dev.goldmensch.fluava.ast.tree.entry.Term.class::isInstance)
@@ -20,9 +22,9 @@ public class Resource {
 
         this.messages = resource.components()
                 .stream()
-                .filter(dev.goldmensch.fluava.ast.tree.message.Message.class::isInstance)
-                .map(dev.goldmensch.fluava.ast.tree.message.Message.class::cast)
-                .collect(Collectors.toUnmodifiableMap(dev.goldmensch.fluava.ast.tree.message.Message::id, msg -> new Message(functions, locale, this, msg)));
+                .filter(AstMessage.class::isInstance)
+                .map(AstMessage.class::cast)
+                .collect(Collectors.toUnmodifiableMap(AstMessage::id, msg -> new Message(functions, locale, this, msg)));
     }
 
     public Message message(String key) {
