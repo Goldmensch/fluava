@@ -136,7 +136,7 @@ public class Formatter {
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {
                 Message.Interpolated refMsg = resource.message(id).interpolated(task.variables());
                 String referenceContent = attribute
-                        .map(termId -> refMsg.attributes().get(termId))
+                        .map(refMsg::attribute)
                         .orElse(refMsg.value());
 
                 yield new Value.Text(referenceContent);
@@ -145,7 +145,7 @@ public class Formatter {
             case InlineExpression.TermReference(String id, Optional<String> attribute, FList<Argument> arguments) -> {
                 Message.Interpolated refTerm = resource.term(id).interpolated(resolveNamedArguments(arguments));
                 String referenceContent = attribute
-                        .map(termId -> refTerm.attributes().get(termId))
+                        .map(refTerm::attribute)
                         .orElse(refTerm.value());
 
                 yield new Value.Text(referenceContent);

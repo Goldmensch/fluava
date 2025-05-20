@@ -59,7 +59,6 @@ public final class FluentParser implements Function<String, Resource> {
     @Override
     public Resource apply(String s) {
         var result = resource.parseAll(s);
-        System.out.println(result.fullErrorMessage());
 
         if (result instanceof Failure<Character, ?> fail) {
             Input<Character> next = fail.next();
@@ -67,6 +66,5 @@ public final class FluentParser implements Function<String, Resource> {
         }
 
         return result.get();
-
     }
 }
