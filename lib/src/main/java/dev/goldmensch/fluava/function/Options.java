@@ -16,15 +16,15 @@ public class Options {
         this.rawOptions = rawOptions;
     }
 
-    public <T> T get(String key, Class<T> type, T fallback) {
+    public <T> T get(String key, Class<T> type, T fallback) throws FunctionException {
         return entry(key).as(type, fallback);
     }
 
-    public <T> T get(String key, Class<T> type) {
+    public <T> T get(String key, Class<T> type) throws FunctionException {
         return entry(key).as(type);
     }
 
-    public <T> void ifHasDo(String key, Class<T> type, Consumer<T> action) {
+    public <T> void ifHasDo(String key, Class<T> type, Consumer<T> action) throws FunctionException {
         if (!has(key)) return;
         action.accept(get(key, type));
     }
@@ -57,19 +57,19 @@ public class Options {
             return key;
         }
 
-        public <T> T as(Class<T> type, T fallback) {
+        public <T> T as(Class<T> type, T fallback) throws FunctionException {
             if (raw == null) return fallback;
 
             ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(type));
 
             return switch (result) {
                 case ConversionResult.Success(T val) -> val;
-                case ConversionResult.Failure<?> failure -> throw new IllegalStateException("Couldn't convert option!: \n" + failure.detailedMessage());
+                case ConversionResult.Failure<?> failure -> throw new FunctionException("Couldn't convert option!: \n" + failure.detailedMessage());
             };
         }
 
-        public <T> T as(Class<T> type) {
-            if (raw == null) throw new IllegalArgumentException("Option '%s' may not be unset!".formatted(key));
+        public <T> T as(Class<T> type) throws FunctionException {
+            if (raw == null) throw new FunctionException("Option '%s' may not be unset!".formatted(key));
             return as(type, null);
         }
     }

@@ -9,7 +9,7 @@ import dev.goldmensch.fluava.ast.tree.expression.SelectExpression;
 import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
-import dev.goldmensch.fluava.function.Functions;
+import dev.goldmensch.fluava.function.internal.Functions;
 import dev.goldmensch.fluava.function.Value;
 import dev.goldmensch.fluava.message.Message;
 import dev.goldmensch.fluava.resource.Resource;
@@ -38,7 +38,7 @@ public class Formatter {
     }
 
     public String apply(Locale locale, Map<String, Object> variables) {
-        if (components == null) return "";
+        if (this == EMPTY) return "";
 
         Task task = new Task(locale, new StringBuilder(), variables);
 
@@ -106,15 +106,18 @@ public class Formatter {
         StringBuilder builder = task.builder();
         Value computed = computeExpression(task, expression, true);
 
-        if (!(computed instanceof Value.Result result)) throw new IllegalStateException("Value couldn't be formatted!");
+        if (!(computed instanceof Value.Formatted formatted)) {
+            builder.append("null");
+            return;
+        }
 
-        builder.append(result.stringValue());
+        builder.append(formatted.stringValue());
     }
 
     private Value computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
         return switch (expression) {
             case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
-            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseThrow();
+            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseGet(() -> new Value.Raw(value));
             case InlineExpression.VariableReference(String id) -> {
                 Object placeholder = task.variables().get(id);
                 if (!implicitResolve) yield new Value.Raw(placeholder);
@@ -130,7 +133,9 @@ public class Formatter {
                         .map(Value::value)
                         .toList();
 
-                yield functions.call(task.locale(), id, positional, resolveNamedArguments(arguments));
+                yield functions.call(task.locale(), id, positional, resolveNamedArguments(arguments))
+                        .map(Value.class::cast)
+                        .orElseGet(() -> new Value.Raw(null));
             }
 
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {

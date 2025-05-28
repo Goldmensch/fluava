@@ -2,7 +2,7 @@ package dev.goldmensch.fluava;
 
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
-import dev.goldmensch.fluava.function.Functions;
+import dev.goldmensch.fluava.function.internal.Functions;
 import dev.goldmensch.fluava.resource.Resource;
 
 import java.io.IOException;

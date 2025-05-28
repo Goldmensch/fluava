@@ -2,7 +2,7 @@ package dev.goldmensch.fluava.resource;
 
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
-import dev.goldmensch.fluava.function.Functions;
+import dev.goldmensch.fluava.function.internal.Functions;
 import dev.goldmensch.fluava.message.Message;
 
 import java.util.Locale;

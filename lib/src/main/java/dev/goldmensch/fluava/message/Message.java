@@ -3,7 +3,7 @@ package dev.goldmensch.fluava.message;
 import dev.goldmensch.fluava.ast.tree.entry.Term;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.ast.tree.message.Attribute;
-import dev.goldmensch.fluava.function.Functions;
+import dev.goldmensch.fluava.function.internal.Functions;
 import dev.goldmensch.fluava.message.internal.Formatter;
 import dev.goldmensch.fluava.resource.Resource;
 
@@ -60,8 +60,7 @@ public class Message {
 
         Map<String, String> attributes = attributeFormatters.entrySet()
                 .stream()
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().apply(locale, variables)))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, entry -> entry.getValue().apply(locale, variables)));
 
         return new Interpolated(contentFormatter.apply(locale, variables), attributes);
     }

@@ -1,5 +1,6 @@
 package dev.goldmensch.fluava.function.builtin;
 
+import dev.goldmensch.fluava.Result;
 import dev.goldmensch.fluava.function.Context;
 import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.Options;
@@ -11,8 +12,8 @@ import java.util.List;
 public class RawFunction implements Function.Implicit<Value.Text, String> {
 
     @Override
-    public Value.Text apply(Context context, String value, Options options) {
-        return new Value.Text(value);
+    public Result<Value.Text> apply(Context context, String value, Options options) {
+        return new Result.Success<>(new Value.Text(value));
     }
 
     @Override
