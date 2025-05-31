@@ -57,7 +57,7 @@ jreleaser {
     signing {
         active = Active.ALWAYS
         armored = true
-        mode = Signing.Mode.COMMAND
+//        mode = Signing.Mode.COMMAND
     }
 
     deploy {
