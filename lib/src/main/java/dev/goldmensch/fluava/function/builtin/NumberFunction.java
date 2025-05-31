@@ -1,5 +1,6 @@
 package dev.goldmensch.fluava.function.builtin;
 
+import dev.goldmensch.fluava.Result;
 import dev.goldmensch.fluava.function.Context;
 import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.Options;
@@ -13,7 +14,7 @@ import java.util.*;
 public class NumberFunction implements Function.Implicit<Value.Number, Double> {
 
     @Override
-    public Value.Number apply(Context context, Double value, Options options) {
+    public Result<Value.Number> apply(Context context, Double value, Options options) {
         Locale locale = context.locale();
         NumberFormat format = switch (options.get("style", String.class, "decimal")) {
             case "decimal" -> NumberFormat.getNumberInstance(locale);
@@ -44,7 +45,7 @@ public class NumberFunction implements Function.Implicit<Value.Number, Double> {
         options.ifHasDo("minimumFractionDigits", int.class, format::setMinimumFractionDigits);
         options.ifHasDo("maximumFractionDigits", int.class, format::setMaximumFractionDigits);
 
-        return new Value.Number(format.format(value), value);
+        return new Result.Success<>(new Value.Number(format.format(value), value));
     }
 
     @Override

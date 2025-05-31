@@ -1,25 +1,28 @@
-package dev.goldmensch.fluava.message.internal;
+package dev.goldmensch.fluava.internal;
 
 import dev.goldmensch.cldrplurals.PluralCategory;
 import dev.goldmensch.cldrplurals.Plurals;
 import dev.goldmensch.cldrplurals.Type;
+import dev.goldmensch.fluava.Message;
+import dev.goldmensch.fluava.Resource;
 import dev.goldmensch.fluava.ast.tree.expression.Argument;
 import dev.goldmensch.fluava.ast.tree.expression.InlineExpression;
 import dev.goldmensch.fluava.ast.tree.expression.SelectExpression;
 import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
-import dev.goldmensch.fluava.function.Functions;
 import dev.goldmensch.fluava.function.Value;
-import dev.goldmensch.fluava.message.Message;
-import dev.goldmensch.fluava.resource.Resource;
+import dev.goldmensch.fluava.function.internal.Functions;
 import io.github.parseworks.FList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Formatter {
     public static final Formatter EMPTY = new Formatter();
+    private static final Logger log = LoggerFactory.getLogger(Formatter.class);
 
     private final Functions functions;
     private final FList<PatternElement> components;
@@ -38,7 +41,7 @@ public class Formatter {
     }
 
     public String apply(Locale locale, Map<String, Object> variables) {
-        if (components == null) return "";
+        if (this == EMPTY) return "";
 
         Task task = new Task(locale, new StringBuilder(), variables);
 
@@ -106,15 +109,19 @@ public class Formatter {
         StringBuilder builder = task.builder();
         Value computed = computeExpression(task, expression, true);
 
-        if (!(computed instanceof Value.Result result)) throw new IllegalStateException("Value couldn't be formatted!");
+        if (!(computed instanceof Value.Formatted formatted)) {
+            log.warn("Couldn't format expression");
+            builder.append("null");
+            return;
+        }
 
-        builder.append(result.stringValue());
+        builder.append(formatted.stringValue());
     }
 
     private Value computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
         return switch (expression) {
             case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
-            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseThrow();
+            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseGet(() -> new Value.Raw(value));
             case InlineExpression.VariableReference(String id) -> {
                 Object placeholder = task.variables().get(id);
                 if (!implicitResolve) yield new Value.Raw(placeholder);
@@ -130,13 +137,15 @@ public class Formatter {
                         .map(Value::value)
                         .toList();
 
-                yield functions.call(task.locale(), id, positional, resolveNamedArguments(arguments));
+                yield functions.call(task.locale(), id, positional, resolveNamedArguments(arguments))
+                        .map(Value.class::cast)
+                        .orElseGet(() -> new Value.Raw(null));
             }
 
             case InlineExpression.MessageReference(String id, Optional<String> attribute) -> {
                 Message.Interpolated refMsg = resource.message(id).interpolated(task.variables());
                 String referenceContent = attribute
-                        .map(termId -> refMsg.attributes().get(termId))
+                        .map(refMsg::attribute)
                         .orElse(refMsg.value());
 
                 yield new Value.Text(referenceContent);
@@ -145,7 +154,7 @@ public class Formatter {
             case InlineExpression.TermReference(String id, Optional<String> attribute, FList<Argument> arguments) -> {
                 Message.Interpolated refTerm = resource.term(id).interpolated(resolveNamedArguments(arguments));
                 String referenceContent = attribute
-                        .map(termId -> refTerm.attributes().get(termId))
+                        .map(refTerm::attribute)
                         .orElse(refTerm.value());
 
                 yield new Value.Text(referenceContent);

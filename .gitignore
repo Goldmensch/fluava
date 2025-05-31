@@ -9,3 +9,5 @@ target/
 
 **/build/
 .gradle/
+
+lib/src/main/java/dev/goldmensch/fluava/TestMain.java

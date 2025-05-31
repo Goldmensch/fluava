@@ -1,5 +1,6 @@
 package dev.goldmensch.fluava.function.builtin;
 
+import dev.goldmensch.fluava.Result;
 import dev.goldmensch.fluava.function.Context;
 import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.Options;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class DatetimeFunction implements Function.Implicit<Value.Text, Temporal> {
 
     @Override
-    public Value.Text apply(Context context, Temporal value, Options options) {
+    public Result<Value.Text> apply(Context context, Temporal value, Options options) {
         ZonedDateTime time = switch (value) {
             case ZonedDateTime zT -> zT;
             case LocalDateTime local -> {
@@ -37,7 +38,7 @@ public class DatetimeFunction implements Function.Implicit<Value.Text, Temporal>
 
         String formatted = IntlDateTimeFormatter.format(context.locale(), time, parameters);
 
-        return new Value.Text(formatted);
+        return new Result.Success<>(new Value.Text(formatted));
     }
 
     @Override

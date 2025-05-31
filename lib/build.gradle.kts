@@ -9,6 +9,7 @@ repositories {
 dependencies {
     implementation(project(":cldr-plurals"))
     implementation("io.github.parseworks:parseworks:0.1.1")
+    implementation("org.slf4j:slf4j-api:2.0.17")
 
     implementation("io.github.kaktushose:proteus:0.1.2")
 }
