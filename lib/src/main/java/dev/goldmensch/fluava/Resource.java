@@ -11,33 +11,32 @@ import java.util.stream.Collectors;
 
 public class Resource {
 
-    public static final Resource EMPTY = new Resource(null, List.of());
-
     private final SequencedCollection<Level> levels;
 
-    Resource(Functions functions, SequencedCollection<Map.Entry<Locale, AstResource>> source) {
+    Resource(Functions functions, SequencedCollection<Pair> source) {
         this.levels = source
                 .stream()
                 .map(entry -> {
-                    FList<? extends AstResource.ResourceComponent> components = entry.getValue().components();
-                    Locale locale = entry.getKey();
+                    FList<? extends AstResource.ResourceComponent> components = entry.resource().components();
 
                     Map<String, Message> terms = components
                             .stream()
                             .filter(dev.goldmensch.fluava.ast.tree.entry.Term.class::isInstance)
                             .map(dev.goldmensch.fluava.ast.tree.entry.Term.class::cast)
-                            .collect(Collectors.toUnmodifiableMap(dev.goldmensch.fluava.ast.tree.entry.Term::id, term -> new Message(functions, locale, this, term)));
+                            .collect(Collectors.toUnmodifiableMap(dev.goldmensch.fluava.ast.tree.entry.Term::id, term -> new Message(functions, entry.locale, this, term)));
 
                     Map<String, Message> messages = components
                             .stream()
                             .filter(AstMessage.class::isInstance)
                             .map(AstMessage.class::cast)
-                            .collect(Collectors.toUnmodifiableMap(AstMessage::id, msg -> new Message(functions, locale, this, msg)));
+                            .collect(Collectors.toUnmodifiableMap(AstMessage::id, msg -> new Message(functions, entry.locale, this, msg)));
 
                     return new Level(messages, terms);
                 })
                 .toList();
     }
+
+    record Pair(Locale locale, AstResource resource) {}
 
     public Message message(String key) {
         return get(key, Level::messages);
