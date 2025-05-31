@@ -36,6 +36,12 @@ jobs:
           fi
       - uses: gradle/actions/setup-gradle@v4
         if: ${{ steps.check.outputs.release == 'true' }}
+      - name: Setup Java
+        if: ${{ needs.check_if_release.outputs.release == 'true' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
       - name: verify project version defined in gradle
         id: verify
         if: ${{ steps.check.outputs.release == 'true' }}
