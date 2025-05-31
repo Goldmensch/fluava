@@ -8,3 +8,5 @@
 rootProject.name = "fluava"
 include("lib")
 include("cldr-plurals")
+
+project(":lib").name = rootProject.name

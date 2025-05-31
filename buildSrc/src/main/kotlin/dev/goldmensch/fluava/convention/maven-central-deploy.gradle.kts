@@ -1,6 +1,8 @@
 package dev.goldmensch.fluava.convention
 
 import org.jreleaser.model.Active
+import org.jreleaser.model.Signing
+import software.amazon.awssdk.core.internal.signer.SigningMethod
 
 plugins {
     `maven-publish`
@@ -55,6 +57,7 @@ jreleaser {
     signing {
         active = Active.ALWAYS
         armored = true
+        mode = Signing.Mode.COMMAND
     }
 
     deploy {
