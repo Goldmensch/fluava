@@ -1,13 +1,14 @@
-package dev.goldmensch.fluava.message;
+package dev.goldmensch.fluava;
 
 import dev.goldmensch.fluava.ast.tree.entry.Term;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.ast.tree.message.Attribute;
 import dev.goldmensch.fluava.function.internal.Functions;
-import dev.goldmensch.fluava.message.internal.Formatter;
-import dev.goldmensch.fluava.resource.Resource;
+import dev.goldmensch.fluava.internal.Formatter;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Message {
@@ -24,7 +25,7 @@ public class Message {
         this.attributeFormatters = null;
     }
 
-    public Message(Functions functions, Locale locale, Resource leakingResource, AstMessage astMessage) {
+    Message(Functions functions, Locale locale, Resource leakingResource, AstMessage astMessage) {
         this.key = astMessage.id();
         this.locale = Objects.requireNonNull(locale);
         this.contentFormatter = astMessage.content()
@@ -36,7 +37,7 @@ public class Message {
                 .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern())));
     }
 
-    public Message(Functions functions, Locale locale, Resource leakingResource, Term astTerm) {
+    Message(Functions functions, Locale locale, Resource leakingResource, Term astTerm) {
         this.key = astTerm.id();
         this.locale = Objects.requireNonNull(locale);
         this.contentFormatter = new Formatter(functions, leakingResource, astTerm.pattern());

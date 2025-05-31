@@ -1,18 +1,18 @@
-package dev.goldmensch.fluava.message.internal;
+package dev.goldmensch.fluava.internal;
 
 import dev.goldmensch.cldrplurals.PluralCategory;
 import dev.goldmensch.cldrplurals.Plurals;
 import dev.goldmensch.cldrplurals.Type;
+import dev.goldmensch.fluava.Message;
+import dev.goldmensch.fluava.Resource;
 import dev.goldmensch.fluava.ast.tree.expression.Argument;
 import dev.goldmensch.fluava.ast.tree.expression.InlineExpression;
 import dev.goldmensch.fluava.ast.tree.expression.SelectExpression;
 import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
-import dev.goldmensch.fluava.function.internal.Functions;
 import dev.goldmensch.fluava.function.Value;
-import dev.goldmensch.fluava.message.Message;
-import dev.goldmensch.fluava.resource.Resource;
+import dev.goldmensch.fluava.function.internal.Functions;
 import io.github.parseworks.FList;
 
 import java.util.*;

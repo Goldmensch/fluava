@@ -34,8 +34,8 @@ public final class FluentParser implements Function<String, Result<AstResource>>
     // AstResource
     private static final Parser<Character, AstResource> resource = oneOf(
             entry.map(AstResource.ResourceComponent.class::cast),
-            blank_block.as(new AstResource.ResourceComponent.Blank())
-            ,junk
+            blank_block.as(new AstResource.ResourceComponent.Blank()),
+            junk
     ).zeroOrMany()
             .map(FluentParser::joinComments)
             .map(AstResource::new);

@@ -1,4 +1,4 @@
-package dev.goldmensch.fluava.message.internal;
+package dev.goldmensch.fluava.internal;
 
 import java.util.Locale;
 import java.util.Map;

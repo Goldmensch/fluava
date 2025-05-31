@@ -66,8 +66,8 @@ public class EntryP {
 
     // Entry
     static final Parser<Character, Entry> entry = oneOf(
-            message.thenSkip(line_end),
-            term.thenSkip(line_end),
+            message,
+            term,
             comment_line
     );
 }
