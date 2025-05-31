@@ -1,11 +1,11 @@
 import cldrgenerator.CLDRGenerateTask
 
 plugins {
-    id("java")
+    id("dev.goldmensch.fluava.convention.java")
+    id("dev.goldmensch.fluava.convention.maven-central-deploy")
 }
 
-group = "io.github.goldmensch"
-version = "unspecified"
+group = "dev.goldmensch.fluava"
 
 repositories {
     mavenCentral()
@@ -28,11 +28,4 @@ tasks.processResources {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
-    }
 }
