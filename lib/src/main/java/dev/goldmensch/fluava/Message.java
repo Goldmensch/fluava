@@ -46,10 +46,6 @@ public class Message {
                 .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern())));
     }
 
-    public boolean notFound() {
-        return locale == null; // only null if message not found
-    }
-
     public String apply(Map<String, Object> variables) {
         if (notFound()) return key;
 
@@ -66,7 +62,12 @@ public class Message {
         return new Interpolated(contentFormatter.apply(locale, variables), attributes);
     }
 
+    private boolean notFound() {
+        return locale == null; // only null if message not found
+    }
+
     public class Interpolated {
+
         private final String value;
         private final Map<String, String> attributes;
 

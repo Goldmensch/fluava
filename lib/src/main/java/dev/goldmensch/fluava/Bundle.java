@@ -1,16 +1,23 @@
 package dev.goldmensch.fluava;
 
 import dev.goldmensch.fluava.ast.tree.AstResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Bundle {
+    public static final Logger log = LoggerFactory.getLogger(Bundle.class);
+
     private final Fluava fluava;
     private final Locale fallback;
     private final String base;
@@ -55,8 +62,8 @@ public class Bundle {
                         new Bundle.Pair(Locale.of(l.getLanguage()), "%s.ftl".formatted(l.getLanguage()))
                 )
                 .map(pair -> {
-                    AstResource resource = loadFound(find(base + "_", pair.name));
-                    if (resource == null) resource = loadFound(find(base + "/", pair.name));
+                    AstResource resource = readFile(base + "_", pair.name);
+                    if (resource == null) resource = readFile(base + "/", pair.name);
                     if (resource != null) return new Resource.Pair(pair.locale, resource);
                     return null;
                 })
@@ -66,19 +73,16 @@ public class Bundle {
 
     private record Pair(Locale locale, String name) {}
 
-    private String find(String prefix, String name) {
+    private AstResource readFile(String prefix, String name) {
         String path = "/%s%s".formatted(prefix, name);
         try (InputStream in = this.getClass().getResourceAsStream(path)) {
             if (in == null) return null;
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException _) {
+            String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            return fluava.parse(content).orElse(null);
+        } catch (IOException e) {
+            log.error("Error while reading fluent file from classpath at {}", path, e);
             return null;
         }
-    }
-
-    private AstResource loadFound(String content) {
-        if (content == null) return null;
-        return fluava.parse(content).orElse(null);
     }
 
 

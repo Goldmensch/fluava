@@ -23,7 +23,6 @@ public class Fluava {
 
         return switch (parsingResult) {
             case Result.Success(AstResource value) -> new Result.Success<>(new Resource(functions, List.of(new Resource.Pair(locale, value))));
-
             case Result.Failure<?> failure -> failure.to();
         };
     }

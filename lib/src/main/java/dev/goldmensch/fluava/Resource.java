@@ -4,6 +4,8 @@ import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.function.internal.Functions;
 import io.github.parseworks.FList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Function;
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class Resource {
 
+    private static final Logger log = LoggerFactory.getLogger(Resource.class);
     private final SequencedCollection<Level> levels;
 
     Resource(Functions functions, SequencedCollection<Pair> source) {
@@ -31,7 +34,7 @@ public class Resource {
                             .map(AstMessage.class::cast)
                             .collect(Collectors.toUnmodifiableMap(AstMessage::id, msg -> new Message(functions, entry.locale, this, msg)));
 
-                    return new Level(messages, terms);
+                    return new Level(messages, terms, entry.locale);
                 })
                 .toList();
     }
@@ -53,11 +56,17 @@ public class Resource {
             if (found != null) return found;
         }
 
+        String searchedLocals = levels.stream()
+                .map(Level::locale)
+                .map(Locale::toString)
+                .collect(Collectors.joining(", "));
+        log.warn("Didn't find key '{}', searched in locals: {}", key, searchedLocals);
         return new Message(key);
     }
 
     private record Level(
             Map<String, Message> messages,
-            Map<String, Message> terms
+            Map<String, Message> terms,
+            Locale locale
     ) {}
 }

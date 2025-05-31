@@ -8,6 +8,8 @@ import dev.goldmensch.fluava.function.builtin.RawFunction;
 import io.github.kaktushose.proteus.Proteus;
 import io.github.kaktushose.proteus.conversion.ConversionResult;
 import io.github.kaktushose.proteus.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -15,6 +17,7 @@ public class Functions {
     private static final String NUMBER = "NUMBER";
     private static final String RAW = "RAW";
     private static final String DATETIME = "DATETIME";
+    private static final Logger log = LoggerFactory.getLogger(Functions.class);
 
     private final Map<String, Function<?, ?>> functions;
 
@@ -34,7 +37,10 @@ public class Functions {
                 : value;
 
         return findImplicit(actualValue)
-                .flatMap(adapted -> callFunction(adapted.defaultFunction, new Context(locale), new Arguments<>(List.of(adapted.value)), new Options(resolveParams(value, Map.of()))).toOptional());
+                .flatMap(adapted ->
+                        callFunction(adapted.defaultFunction, new Context(locale), new Arguments<>(List.of(adapted.value)), new Options(resolveParams(value, Map.of())))
+                        .toOptional(log::warn)
+                );
     }
 
     @SuppressWarnings("unchecked")
@@ -51,13 +57,13 @@ public class Functions {
                     .orElse(named);
         }
 
-        return callFunction(function, context, new Arguments<>(positional), new Options(resolvedNamed)).toOptional();
+        return callFunction(function, context, new Arguments<>(positional), new Options(resolvedNamed))
+                .toOptional(log::warn);
     }
 
     private <R extends Value.Formatted, T> Result<R> callFunction(Function<R, T> function, Context context, Arguments<T> arguments, Options options) {
         try {
             return function.apply(context, arguments, options);
-
         } catch (FunctionException e) {
             return new Result.Failure<>(e.getMessage());
         }

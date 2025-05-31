@@ -14,12 +14,15 @@ import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
 import dev.goldmensch.fluava.function.Value;
 import dev.goldmensch.fluava.function.internal.Functions;
 import io.github.parseworks.FList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Formatter {
     public static final Formatter EMPTY = new Formatter();
+    private static final Logger log = LoggerFactory.getLogger(Formatter.class);
 
     private final Functions functions;
     private final FList<PatternElement> components;
@@ -107,6 +110,7 @@ public class Formatter {
         Value computed = computeExpression(task, expression, true);
 
         if (!(computed instanceof Value.Formatted formatted)) {
+            log.warn("Couldn't format expression");
             builder.append("null");
             return;
         }

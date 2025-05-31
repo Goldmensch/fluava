@@ -1,6 +1,7 @@
 package dev.goldmensch.fluava;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public sealed interface Result<T> {
@@ -34,5 +35,12 @@ public sealed interface Result<T> {
             case Success(T value) -> Optional.of(value);
             case Failure<T> _ -> Optional.empty();
         };
+    }
+
+    default Optional<T> toOptional(Consumer<String> loggingAction) {
+        if (this instanceof Failure<T>(String error)) {
+            loggingAction.accept(error);
+        }
+        return toOptional();
     }
 }

@@ -16,6 +16,9 @@ public class Arguments<R> {
 
     protected <T> Result<T> tryGetFirst(Class<T> klass) {
         R raw = positional.getFirst();
+
+        if (raw == null) return new Result.Failure<>("Given variable was null or not passed.");
+
         ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(klass));
 
         return switch (result) {
@@ -27,6 +30,9 @@ public class Arguments<R> {
 
     public <T> T get(int number, Class<T> klass) throws FunctionException {
         R raw = positional.get(number);
+
+        if (raw == null) throw new FunctionException("Given variable was null or not passed.");
+
         ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(klass));
 
         return switch (result) {
