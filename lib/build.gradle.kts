@@ -1,6 +1,9 @@
 plugins {
-    `java-library`
+    id("dev.goldmensch.fluava.convention.java")
+    id("dev.goldmensch.fluava.convention.maven-central-deploy")
 }
+
+group = "dev.goldmensch"
 
 repositories {
     mavenCentral()
@@ -11,22 +14,5 @@ dependencies {
     implementation("io.github.parseworks:parseworks:0.1.1")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
-    implementation("io.github.kaktushose:proteus:0.1.2")
-}
-
-testing {
-    suites {
-        // Configure the built-in test suite
-        val test by getting(JvmTestSuite::class) {
-            // Use JUnit4 test framework
-            useJUnit("4.13.2")
-        }
-    }
-}
-
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
-    }
+    api("io.github.kaktushose:proteus:0.1.2")
 }
