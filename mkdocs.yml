@@ -1,5 +1,5 @@
 site_name: Fluava Wiki
-site_url: https://goldmensch.github.com/Goldmensch/fluava
+site_url: https://goldmensch.github.io/fluava/
 
 theme:
   features:
@@ -45,7 +45,7 @@ extra:
     default: wiki
     provider: mike
 
-copyright: Copyright &copy; 2025 Kaktushose
+copyright: Copyright &copy; 2025 Nick Hensel
 
 plugins:
   - search
