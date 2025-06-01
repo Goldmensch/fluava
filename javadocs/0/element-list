@@ -1,0 +1,15 @@
+module:dev.goldmensch.fluava
+dev.goldmensch.fluava
+dev.goldmensch.fluava.ast
+dev.goldmensch.fluava.ast.tree
+dev.goldmensch.fluava.ast.tree.entry
+dev.goldmensch.fluava.ast.tree.expression
+dev.goldmensch.fluava.ast.tree.message
+dev.goldmensch.fluava.ast.tree.pattern
+dev.goldmensch.fluava.function
+dev.goldmensch.fluava.function.builtin
+dev.goldmensch.fluava.function.internal
+dev.goldmensch.fluava.internal
+module:dev.goldmensch.fluava.cldrplurals
+dev.goldmensch.cldrplurals
+dev.goldmensch.cldrplurals.internal
