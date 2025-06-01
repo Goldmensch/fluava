@@ -75,4 +75,4 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Javadocs: https://github.com/Goldmensch/fluava
+  - Javadocs: https://goldmensch.github.io/fluava/javadocs
