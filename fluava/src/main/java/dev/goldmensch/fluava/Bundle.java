@@ -15,6 +15,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/// A bundle is a collection of several fluent resources for multiple locales.
+/// The fluent files are searched for lazily similar to how [java.util.ResourceBundle] work.
+///
+/// The classpath will be searched for a fluent file given a specific locale according to following order:
+///
+/// 1. BASE_LANGUAGE_COUNTRY_VARIANT.ftl
+/// 2. BASE/LANGUAGE_COUNTRY_VARIANT.ftl
+/// 3. BASE_LANGUAGE_COUNTRY.ftl
+/// 4. BASE/LANGUAGE_COUNTRY.ftl
+/// 5. BASE_LANGUAGE.ftl
+/// 6. BASE/LANGUAGE.ftl
+///
+/// If a key isn't found in any of the above files, the same procedure will be done for the given "fallback" locale.
+/// If even then a key isn't found, the key will be returned as the translated value by any [Resource]/[Message].
+///
 public class Bundle {
     public static final Logger log = LoggerFactory.getLogger(Bundle.class);
 
@@ -23,25 +38,42 @@ public class Bundle {
     private final String base;
     private final ConcurrentHashMap<Locale, Resource> loadedResources = new ConcurrentHashMap<>();
 
-    public Bundle(Fluava fluava, Locale fallback, String base) {
+    Bundle(Fluava fluava, Locale fallback, String base) {
         this.fluava = fluava;
         this.fallback = fallback;
         this.base = base;
     }
 
+    /// @param key the key of the searched message
+    /// @param locale the locale to be searched for
+    ///
+    /// @return the found [Message]
     public Message message(Locale locale, String key) {
-        return getResource(locale).message(key);
+        return resource(locale).message(key);
     }
 
+    /// @param key the key of the searched message
+    /// @param locale the locale to be searched for
+    /// @param variables the variables, which should be applied on the found message
+    ///
+    /// @return the formatted message
     public String apply(Locale locale, String key, Map<String, Object> variables) {
         return message(locale, key).apply(variables);
     }
 
+    /// @param key the key of the searched message
+    /// @param locale the locale to be searched for
+    /// @param variables the variables, which should be applied on the found message
+    ///
+    /// @return the formatted message and attributes of the message
     public Message.Interpolated interpolated(Locale locale, String key, Map<String, Object> variables) {
         return message(locale, key).interpolated(variables);
     }
 
-    private Resource getResource(Locale locale) {
+    /// @param locale the requested locale
+    ///
+    /// @return the found [Resource]
+    public Resource resource(Locale locale) {
         return loadedResources.computeIfAbsent(locale, this::load);
     }
 

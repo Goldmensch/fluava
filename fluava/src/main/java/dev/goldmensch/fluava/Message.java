@@ -11,6 +11,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/// This class represents a message or term identified by a specific key in a fluent file.
+/// Each message instance represents exactly one message/term for one specific locale.
+///
+/// All methods of this class are guaranteed to never throw an exception or return null.
+/// If a message isn't found, methods of this class will return the key instead.
 public class Message {
 
     private final String key;
@@ -18,7 +23,7 @@ public class Message {
     private final Formatter contentFormatter;
     private final Map<String, Formatter> attributeFormatters;
 
-    public Message(String key) {
+    Message(String key) {
         this.key = key;
         this.locale = null;
         this.contentFormatter = null;
@@ -46,12 +51,20 @@ public class Message {
                 .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern())));
     }
 
+    /// Returns the message after applying the given variables.
+    ///
+    /// @param variables the variables and their value
+    /// @return the formatted message
     public String apply(Map<String, Object> variables) {
         if (notFound()) return key;
 
         return contentFormatter.apply(locale, variables);
     }
 
+    /// Returns both message and attributes of this entry after applying the given variables.
+    ///
+    /// @param variables the variables and their value
+    /// @return the formatted message and attributes
     public Interpolated interpolated(Map<String, Object> variables) {
         if (notFound()) return new Interpolated(key, Map.of());
 
@@ -76,10 +89,13 @@ public class Message {
             this.attributes = Objects.requireNonNull(attributes);
         }
 
+        /// @return the formatted message
         public String value() {
             return value;
         }
 
+        /// @param attKey the attributes key
+        /// @return the formatted attribute of this message
         public String attribute(String attKey) {
             return attributes.getOrDefault(attKey, key + "#" + attKey);
         }

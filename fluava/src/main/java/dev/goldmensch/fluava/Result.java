@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+
 public sealed interface Result<T> {
     record Success<T>(T value) implements Result<T> {}
     record Failure<T>(String error) implements Result<T> {
