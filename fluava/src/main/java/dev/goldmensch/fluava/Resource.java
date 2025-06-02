@@ -11,6 +11,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/// A resource is a layered representation of one or more fluent files.
+///
+/// Every method of this class is guaranteed to never throw an exception or return null.
+/// If a key looked for isn't found, then an empty message is returned which just return the messages key.
 public class Resource {
 
     private static final Logger log = LoggerFactory.getLogger(Resource.class);
@@ -41,10 +45,14 @@ public class Resource {
 
     record Pair(Locale locale, AstResource resource) {}
 
+    /// @param key the message key
+    /// @return the found message
     public Message message(String key) {
         return get(key, Level::messages);
     }
 
+    /// @param key the term key
+    /// @return the found term
     public Message term(String key) {
         return get(key, Level::terms);
     }

@@ -24,17 +24,3 @@ subprojects {
         options.tags("apiNote:a:API Note:", "implSpec:a:Implementation Requirements:", "implNote:a:Implementation Note:")
     }
 }
-
-//tasks.withType<Javadoc>().configureEach {
-//    val options = options as StandardJavadocDocletOptions
-//    options.overview = "src/main/javadoc/overview.md"
-//    options.links = listOf()
-//
-//    doLast {
-//        copy {
-//            include("**/doc-files/*")
-//            from("src/main/javadoc")
-//            into(project.layout.buildDirectory.dir("docs/javadoc"))
-//        }
-//    }
-//}
