@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "cd/docs"
 
 jobs:
   check_if_release:
