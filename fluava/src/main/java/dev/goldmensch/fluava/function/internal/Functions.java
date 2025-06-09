@@ -82,6 +82,7 @@ public class Functions {
 
     @SuppressWarnings("unchecked")
     private <T> Optional<Adapted<T>> findImplicit(Object value) {
+        if (value == null) return Optional.empty();
         return functions.values()
                 .stream()
                 .filter(Function.Implicit.class::isInstance)
