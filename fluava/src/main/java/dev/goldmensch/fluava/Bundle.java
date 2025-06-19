@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /// A bundle is a collection of several fluent resources for multiple locales.
-/// The fluent files are searched for lazily similar to how [java.util.ResourceBundle] work.
+/// The fluent files are searched lazily, similar to how [java.util.ResourceBundle] work.
 ///
 /// The classpath will be searched for a fluent file given a specific locale according to following order:
 ///
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 /// 6. BASE/LANGUAGE.ftl
 ///
 /// If a key isn't found in any of the above files, the same procedure will be done for the given "fallback" locale.
-/// If even then a key isn't found, the key will be returned as the translated value by any [Resource]/[Message].
+/// If even then a key isn't found, the key will be returned as the "translated value" by any [Resource]/[Message].
 ///
 public class Bundle {
     public static final Logger log = LoggerFactory.getLogger(Bundle.class);
@@ -52,6 +52,9 @@ public class Bundle {
         return resource(locale).message(key);
     }
 
+    /// Searches the bundle for the specific key and locale according to the rules stated above.
+    /// If found, the specified variables will be applied to the placeable in the message.
+    ///
     /// @param key the key of the searched message
     /// @param locale the locale to be searched for
     /// @param variables the variables, which should be applied on the found message
@@ -61,6 +64,9 @@ public class Bundle {
         return message(locale, key).apply(variables);
     }
 
+    /// Searches the bundle for the specific key and locale according to the rules stated above.
+    /// If found, the specified variables will be applied to the placeable in the message.
+    ///
     /// @param key the key of the searched message
     /// @param locale the locale to be searched for
     /// @param variables the variables, which should be applied on the found message
@@ -70,6 +76,9 @@ public class Bundle {
         return message(locale, key).interpolated(variables);
     }
 
+    /// Searched for the best fit fluent file in this bundle. If not found, this method returns
+    /// an "empty" [Resource] that always returns the key as the value.
+    ///
     /// @param locale the requested locale
     ///
     /// @return the found [Resource]

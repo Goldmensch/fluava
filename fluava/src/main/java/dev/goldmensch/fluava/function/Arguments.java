@@ -7,6 +7,7 @@ import io.github.kaktushose.proteus.type.Type;
 
 import java.util.List;
 
+/// The positional arguments of a function call
 public class Arguments<R> {
     private final List<? extends R> positional;
 
@@ -28,6 +29,14 @@ public class Arguments<R> {
     }
 
 
+    /// Gets the nth argument
+    ///
+    /// @param number the arguments position
+    /// @param klass the variables class to what it should be converted (via proteus)
+    /// @param <T> the variables type
+    ///
+    /// @throws FunctionException if the variables wasn't found, is null or couldn't be converted to the requested class
+    /// @return the nth argument as the requested class
     public <T> T get(int number, Class<T> klass) throws FunctionException {
         R raw = positional.get(number);
 

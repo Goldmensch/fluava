@@ -79,6 +79,7 @@ public class Message {
         return locale == null; // only null if message not found
     }
 
+    /// A class containing the the transalted message and it's attributes
     public class Interpolated {
 
         private final String value;

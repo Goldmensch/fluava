@@ -13,6 +13,18 @@ import java.util.*;
 ///
 /// To use this library, you have to create an instance of this class and pass a "fallback" locale,
 /// which will be used if a certain key isn't found for a requested locale.
+///
+/// ## Example
+/// ```java
+/// // create Fluava instance with as English as the fallback locale
+/// Fluava fluava = new Fluava(Locale.ENGLISH);
+///
+/// // get the bundle with basename app
+/// Bundle appBundle = fluava.loadBundle("app");
+///
+/// // get message out of bundle
+/// String failMessage = appBundle.apply(Locale.GERMAN, "fail", Map.of("msg", err.msg()));
+/// ```
 public class Fluava {
     private final Locale fallback;
     private final Functions functions = new Functions(Map.of());
@@ -37,7 +49,7 @@ public class Fluava {
         };
     }
 
-    /// Reads in the given file and creates a new [Resource] according to [#of(String, Locale)]
+    /// Reads in the given file from disk and creates a new [Resource] according to [#of(String, Locale)]
     ///
     /// @param path the fluent file to be read
     /// @param locale the corresponding locale
