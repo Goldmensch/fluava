@@ -14,5 +14,5 @@ dependencies {
     implementation("io.github.parseworks:parseworks:0.1.1")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
-    api("io.github.kaktushose:proteus:0.1.2")
+    api("io.github.kaktushose:proteus:0.2.3")
 }

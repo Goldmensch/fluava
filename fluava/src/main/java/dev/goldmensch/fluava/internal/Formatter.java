@@ -79,8 +79,8 @@ public class Formatter {
                 }
             }
 
-            case Value.Number(String computedValue, Double original) -> {
-                PluralCategory category = Plurals.find(task.locale(), Type.CARDINAL, computedValue);
+            case Value.Number(String computedValue, Double original, Type type) -> {
+                PluralCategory category = Plurals.find(task.locale(), type, computedValue);
 
                 for (Variant entry : expression.others()) {
                     if ((entry.key() instanceof InlineExpression.NumberLiteral(double number) && original == number) ||
