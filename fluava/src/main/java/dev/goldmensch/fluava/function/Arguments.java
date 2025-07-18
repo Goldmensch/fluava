@@ -23,7 +23,7 @@ public class Arguments<R> {
         ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(klass));
 
         return switch (result) {
-            case ConversionResult.Success(T val) -> new Result.Success<>(val);
+            case ConversionResult.Success(T val, var _) -> new Result.Success<>(val);
             case ConversionResult.Failure<?> failure -> new Result.Failure<>(failure.detailedMessage());
         };
     }
@@ -45,7 +45,7 @@ public class Arguments<R> {
         ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(klass));
 
         return switch (result) {
-            case ConversionResult.Success(T val) -> val;
+            case ConversionResult.Success(T val, var _) -> val;
             case ConversionResult.Failure<?> failure -> throw new FunctionException("Couldn't convert positional argument!: \n" + failure.detailedMessage());
         };
     }
