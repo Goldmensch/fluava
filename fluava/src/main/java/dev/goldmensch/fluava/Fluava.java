@@ -2,7 +2,9 @@ package dev.goldmensch.fluava;
 
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
+import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.function.internal.Functions;
+import io.github.parseworks.Parser;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,6 +70,21 @@ public class Fluava {
     /// @return the newly creates [Bundle]
     public Bundle loadBundle(String base) {
         return new Bundle(this, fallback, base);
+    }
+
+    /// Parses the content of this single message in context of the given locale
+    ///
+    /// @param content the localization message to be parsed, must not include a key
+    /// @param locale the [Locale] to be used for formatting
+    ///
+    /// @return the parses message
+    public Result<Message> ofMessage(String content, Locale locale) {
+        String source = "key=" + content;
+
+        return switch (of(source, locale)) {
+            case Result.Success(Resource resource) -> new Result.Success<>(resource.message("key"));
+            case Result.Failure<?> failure -> failure.to();
+        };
     }
 
     Result<AstResource> parse(String content) {

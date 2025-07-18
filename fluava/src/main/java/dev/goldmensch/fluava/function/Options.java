@@ -90,7 +90,7 @@ public class Options {
             ConversionResult<T> result = Proteus.global().convert(raw, Type.dynamic(raw), Type.of(type));
 
             return switch (result) {
-                case ConversionResult.Success(T val) -> val;
+                case ConversionResult.Success(T val, var _) -> val;
                 case ConversionResult.Failure<?> failure -> throw new FunctionException("Couldn't convert option!: \n" + failure.detailedMessage());
             };
         }
