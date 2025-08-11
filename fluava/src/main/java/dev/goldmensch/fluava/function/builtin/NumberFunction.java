@@ -7,6 +7,7 @@ import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.Options;
 import dev.goldmensch.fluava.function.Value;
 import io.github.kaktushose.proteus.Proteus;
+import io.github.kaktushose.proteus.ProteusBuilder;
 import io.github.kaktushose.proteus.conversion.ConversionResult;
 import io.github.kaktushose.proteus.mapping.Mapper;
 import io.github.kaktushose.proteus.mapping.MappingResult;
@@ -22,7 +23,8 @@ public class NumberFunction implements Function.Implicit<Value.Number, Double> {
         Proteus.global().register(
                 io.github.kaktushose.proteus.type.Type.of(String.class),
                 io.github.kaktushose.proteus.type.Type.of(Type.class),
-                Mapper.uni((label, _) -> MappingResult.lossless(Type.valueOf(label.toUpperCase())))
+                Mapper.uni((label, _) -> MappingResult.lossless(Type.valueOf(label.toUpperCase()))),
+                ProteusBuilder.ConflictStrategy.IGNORE
         );
     }
 
