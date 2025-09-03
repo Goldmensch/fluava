@@ -75,11 +75,12 @@ public class Message {
         return new Interpolated(contentFormatter.apply(locale, variables), attributes);
     }
 
-    private boolean notFound() {
+    /// @return whether this message couldn't be found and will return its key
+    public boolean notFound() {
         return locale == null; // only null if message not found
     }
 
-    /// A class containing the the transalted message and it's attributes
+    /// A class containing the translated message and it's attributes
     public class Interpolated {
 
         private final String value;

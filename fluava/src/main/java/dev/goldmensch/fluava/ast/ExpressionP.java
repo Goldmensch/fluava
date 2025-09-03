@@ -87,11 +87,13 @@ class ExpressionP {
             .then(attribute_accessor.optional());
 
     private static final ApplyBuilder<Character, String, Optional<String>>.ApplyBuilder3<FList<Argument>> term_reference = chr('-')
+            .skipThen(opt_blank_inline)
             .skipThen(identifier)
             .then(attribute_accessor.optional())
             .then(call_arguments.optional().map(arguments -> arguments.orElse(FList.of())));
 
     private static final Parser<Character, String> variable_reference = chr('$')
+            .thenSkip(opt_blank_inline)
             .skipThen(identifier);
 
     private static final Parser<Character, Variant.VariantKey> variant_key = chr('[')

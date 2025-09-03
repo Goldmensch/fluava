@@ -51,6 +51,14 @@ public class Fluava {
         };
     }
 
+    public static void main(String[] args) {
+        var message = "key=This { $ notbreaks }. Oh man :(";
+        Fluava fluava = new Fluava(Locale.ENGLISH);
+        var resource = fluava.of(message, Locale.ENGLISH).orElseThrow();
+        var result = resource.message("key").apply(Map.of("breaks", "RIP"));
+        System.out.println(result);
+    }
+
     /// Reads in the given file from disk and creates a new [Resource] according to [#of(String, Locale)]
     ///
     /// @param path the fluent file to be read
