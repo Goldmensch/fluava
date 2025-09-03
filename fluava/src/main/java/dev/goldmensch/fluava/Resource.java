@@ -78,7 +78,7 @@ public class Resource {
                 .map(Level::locale)
                 .map(Locale::toString)
                 .collect(Collectors.joining(", "));
-        log.warn("Didn't find key '{}', searched in locals: {}", key, searchedLocals);
+        log.warn("Didn't find key '{}', searched in locales: {}", key, searchedLocals);
         return new Message(key);
     }
 
