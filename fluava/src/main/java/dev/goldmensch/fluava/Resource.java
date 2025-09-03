@@ -57,6 +57,16 @@ public class Resource {
         return get(key, Level::terms);
     }
 
+    /// @return the locales from what this [Resource] will load its messages.
+    public Set<Locale> locales() {
+        return levels.stream().map(Level::locale).collect(Collectors.toUnmodifiableSet());
+    }
+
+    /// @return whether this [Resource] is empty
+    public boolean isEmpty() {
+        return locales().isEmpty();
+    }
+
     private Message get(String key, Function<Level, Map<String, Message>> mapper) {
         for (Level level : levels) {
             Map<String, Message> entries = mapper.apply(level);
