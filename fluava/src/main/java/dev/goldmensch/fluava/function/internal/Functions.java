@@ -5,6 +5,7 @@ import dev.goldmensch.fluava.function.*;
 import dev.goldmensch.fluava.function.builtin.DatetimeFunction;
 import dev.goldmensch.fluava.function.builtin.NumberFunction;
 import dev.goldmensch.fluava.function.builtin.RawFunction;
+import dev.goldmensch.fluava.function.builtin.StringFunction;
 import io.github.kaktushose.proteus.Proteus;
 import io.github.kaktushose.proteus.conversion.ConversionResult;
 import io.github.kaktushose.proteus.type.Type;
@@ -16,6 +17,7 @@ import java.util.*;
 public class Functions {
     private static final String NUMBER = "NUMBER";
     private static final String RAW = "RAW";
+    private static final String STRING = "STRING";
     private static final String DATETIME = "DATETIME";
     private static final Logger log = LoggerFactory.getLogger(Functions.class);
 
@@ -25,8 +27,9 @@ public class Functions {
         this.functions = new HashMap<>(functions);
 
         this.functions.putIfAbsent(NUMBER, new NumberFunction());
-        this.functions.putIfAbsent(RAW, new RawFunction());
+        this.functions.putIfAbsent(STRING, new StringFunction());
         this.functions.putIfAbsent(DATETIME, new DatetimeFunction());
+        this.functions.putIfAbsent(RAW, new RawFunction());
     }
 
     record Adapted<T>(T value, Function.Implicit<?, T> defaultFunction) {}

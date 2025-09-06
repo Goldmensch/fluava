@@ -3,6 +3,7 @@ package dev.goldmensch.fluava;
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
+import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.internal.Functions;
 import io.github.parseworks.Parser;
 
@@ -29,12 +30,13 @@ import java.util.*;
 /// ```
 public class Fluava {
     private final Locale fallback;
-    private final Functions functions = new Functions(Map.of());
+    private final Functions functions;
     private final FluentParser parser = new FluentParser();
 
     /// @param fallback the fallback locale to use
-    public Fluava(Locale fallback) {
+    public Fluava(Locale fallback, Map<String, Function<?, ?>> functions) {
         this.fallback = fallback;
+        this.functions = new Functions(functions);
     }
 
     /// Creates a new [Resource] from the given contents and locale.
@@ -49,14 +51,6 @@ public class Fluava {
             case Result.Success(AstResource value) -> new Result.Success<>(new Resource(functions, List.of(new Resource.Pair(locale, value))));
             case Result.Failure<?> failure -> failure.to();
         };
-    }
-
-    public static void main(String[] args) {
-        var message = "key=This { $ notbreaks }. Oh man :(";
-        Fluava fluava = new Fluava(Locale.ENGLISH);
-        var resource = fluava.of(message, Locale.ENGLISH).orElseThrow();
-        var result = resource.message("key").apply(Map.of("breaks", "RIP"));
-        System.out.println(result);
     }
 
     /// Reads in the given file from disk and creates a new [Resource] according to [#of(String, Locale)]
