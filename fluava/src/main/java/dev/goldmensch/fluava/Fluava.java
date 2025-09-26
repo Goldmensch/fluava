@@ -1,16 +1,22 @@
 package dev.goldmensch.fluava;
 
+import dev.goldmensch.fluava.ast.EntryP;
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
+import dev.goldmensch.fluava.ast.tree.message.Attribute;
+import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.internal.Functions;
+import io.github.parseworks.FList;
+import io.github.parseworks.Pair;
 import io.github.parseworks.Parser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /// The main entrypoint for fluava.
 ///
@@ -74,14 +80,20 @@ public class Fluava {
         return new Bundle(this, fallback, base);
     }
 
-    /// Parses the content of this single message in context of the given locale
+    /// Parses the content of this single message in context of the given locale.
+    /// Attention: This will trim any leading or trailing whitespace/newlines!
     ///
     /// @param content the localization message to be parsed, must not include a key
     /// @param locale the [Locale] to be used for formatting
     ///
     /// @return the parses message
     public Result<Message> ofMessage(String content, Locale locale) {
-        String source = "key=" + content;
+        // simulate indentation
+        String indented = content.lines()
+                .map(line -> " " + line)
+                .collect(Collectors.joining("\n"));
+
+        String source = "key=\n" + indented;
 
         return switch (of(source, locale)) {
             case Result.Success(Resource resource) -> new Result.Success<>(resource.message("key"));
