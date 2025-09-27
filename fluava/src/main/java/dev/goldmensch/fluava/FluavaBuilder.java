@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 /// A builder used to create instances of [Fluava].
 ///
-/// The default value for the fallback locale ist `Locale.ENGLISH`.
+/// The default value for the fallback locale is `Locale.ENGLISH`.
 public final class FluavaBuilder {
     private final FunctionConfigImpl functionConfig;
     private Locale fallback = Locale.ENGLISH;
@@ -41,6 +41,9 @@ public final class FluavaBuilder {
         return this;
     }
 
+    /// Builds a new [Fluava] instance based on the configuration made in this builder.
+    ///
+    /// @return the [Fluava] instance
     public Fluava build() {
         return new Fluava(
                 fallback,
