@@ -59,20 +59,6 @@ public class Fluava {
         };
     }
 
-    /// Reads in the given file from disk and creates a new [Resource] according to [#of(String, Locale)]
-    ///
-    /// @param path the fluent file to be read
-    /// @param locale the corresponding locale
-    /// @return the newly created resource
-    public Result<Resource> loadResource(Path path, Locale locale) {
-        try {
-            String content = Files.readString(path);
-            return of(content, locale);
-        } catch (IOException e) {
-            return new Result.Failure<>(e.getMessage());
-        }
-    }
-
     /// Creates a new [Bundle] with the given base path
     ///
     /// @return the newly creates [Bundle]
