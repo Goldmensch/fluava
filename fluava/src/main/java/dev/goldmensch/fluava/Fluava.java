@@ -66,27 +66,6 @@ public class Fluava {
         return new Bundle(this, fallback, base);
     }
 
-    /// Parses the content of this single message in context of the given locale.
-    /// Attention: This will trim any leading or trailing whitespace/newlines!
-    ///
-    /// @param content the localization message to be parsed, must not include a key
-    /// @param locale the [Locale] to be used for formatting
-    ///
-    /// @return the parses message
-    public Result<Message> ofMessage(String content, Locale locale) {
-        // simulate indentation
-        String indented = content.lines()
-                .map(line -> " " + line)
-                .collect(Collectors.joining("\n"));
-
-        String source = "key=\n" + indented;
-
-        return switch (of(source, locale)) {
-            case Result.Success(Resource resource) -> new Result.Success<>(resource.message("key"));
-            case Result.Failure<?> failure -> failure.to();
-        };
-    }
-
     Result<AstResource> parse(String content) {
         return parser.apply(content);
     }
