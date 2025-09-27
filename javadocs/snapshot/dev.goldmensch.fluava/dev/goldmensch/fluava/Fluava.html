@@ -72,7 +72,6 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#of(java.lang.String,java.util.Locale)" tabindex="0">of(String, Locale)</a></li>
 <li><a href="#loadBundle(java.lang.String)" tabindex="0">loadBundle(String)</a></li>
-<li><a href="#ofMessage(java.lang.String,java.util.Locale)" tabindex="0">ofMessage(String, Locale)</a></li>
 </ol>
 </li>
 </ol>
@@ -144,12 +143,6 @@ String failMessage = appBundle.apply(Locale.GERMAN, &quot;fail&quot;, Map.of(&qu
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates a new <a href="Resource.html" title="class in dev.goldmensch.fluava"><code>Resource</code></a> from the given contents and locale.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Result.html" title="interface in dev.goldmensch.fluava">Result</a><wbr>&lt;<a href="Message.html" title="class in dev.goldmensch.fluava">Message</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#ofMessage(java.lang.String,java.util.Locale)" class="member-name-link">ofMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;content,
- <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Parses the content of this single message in context of the given locale.</div>
-</div>
 </div>
 </div>
 </div>
@@ -214,24 +207,6 @@ String failMessage = appBundle.apply(Locale.GERMAN, &quot;fail&quot;, Map.of(&qu
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the newly creates <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a></dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ofMessage(java.lang.String,java.util.Locale)">
-<h3>ofMessage</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Result.html" title="interface in dev.goldmensch.fluava">Result</a>&lt;<a href="Message.html" title="class in dev.goldmensch.fluava">Message</a>&gt;</span>&nbsp;<span class="element-name">ofMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;content,
- <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</span></div>
-<div class="block">Parses the content of this single message in context of the given locale.
-Attention: This will trim any leading or trailing whitespace/newlines!</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>content</code> - the localization message to be parsed, must not include a key</dd>
-<dd><code>locale</code> - the <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link"><code>Locale</code></a> to be used for formatting</dd>
-<dt>Returns:</dt>
-<dd>the parses message</dd>
 </dl>
 </div>
 </section>
