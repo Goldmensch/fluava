@@ -1,22 +1,12 @@
 package dev.goldmensch.fluava;
 
-import dev.goldmensch.fluava.ast.EntryP;
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
-import dev.goldmensch.fluava.ast.tree.message.AstMessage;
-import dev.goldmensch.fluava.ast.tree.message.Attribute;
-import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
-import dev.goldmensch.fluava.function.Function;
+import dev.goldmensch.fluava.function.internal.FunctionConfigImpl;
 import dev.goldmensch.fluava.function.internal.Functions;
-import io.github.parseworks.FList;
-import io.github.parseworks.Pair;
-import io.github.parseworks.Parser;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Locale;
 
 /// The main entrypoint for fluava.
 ///
@@ -38,11 +28,38 @@ public class Fluava {
     private final Locale fallback;
     private final Functions functions;
     private final FluentParser parser = new FluentParser();
+    private final FunctionConfigImpl functionConfig;
 
     /// @param fallback the fallback locale to use
-    public Fluava(Locale fallback, Map<String, Function<?, ?>> functions) {
+    /// @param functionConfig the function configuration to use
+    Fluava(Locale fallback, FunctionConfigImpl functionConfig) {
         this.fallback = fallback;
-        this.functions = new Functions(functions);
+        this.functionConfig = functionConfig;
+        this.functions = new Functions(functionConfig);
+    }
+
+    /// Creates a new [FluavaBuilder] to configure your [Fluava] instance.
+    ///
+    /// @return the [FluavaBuilder]
+    public static FluavaBuilder builder() {
+        return new FluavaBuilder();
+    }
+
+    /// Creates a new [FluavaBuilder] preset with the options from the provided [Fluava] instance.
+    /// This can be used to crate "sub instances" which allows to override certain functions/add new ones.
+    ///
+    /// @param fluava the "parent" [Fluava] instance
+    /// @return the [FluavaBuilder] preset with the options from the provided instance
+    public static FluavaBuilder builder(Fluava fluava) {
+        return new FluavaBuilder(fluava);
+    }
+
+    /// Creates a [Fluava] instance with the given fallback locale.
+    ///
+    /// @param fallback the fallback locale
+    /// @return the configured [Fluava] instance
+    public static Fluava create(Locale fallback) {
+        return builder().fallback(fallback).build();
     }
 
     /// Creates a new [Resource] from the given contents and locale.
@@ -72,5 +89,14 @@ public class Fluava {
 
     Functions functions() {
         return functions;
+    }
+
+    // exposed for builder
+    FunctionConfigImpl functionConfig() {
+        return functionConfig;
+    }
+
+    Locale fallback() {
+        return fallback;
     }
 }

@@ -21,10 +21,12 @@ public class Functions {
     private static final String DATETIME = "DATETIME";
     private static final Logger log = LoggerFactory.getLogger(Functions.class);
 
-    private final Map<String, Function<?, ?>> functions;
+    private final Map<String, Function<? extends Value.Formatted, ?>> functions;
+    private final boolean fallbackToToString;
 
-    public Functions(Map<String, Function<?, ?>> functions) {
-        this.functions = new HashMap<>(functions);
+    public Functions(FunctionConfigImpl config) {
+        this.functions = new HashMap<>(config.functions());
+        this.fallbackToToString = config.fallbackToString();
 
         this.functions.putIfAbsent(NUMBER, new NumberFunction());
         this.functions.putIfAbsent(STRING, new StringFunction());
@@ -32,9 +34,9 @@ public class Functions {
         this.functions.putIfAbsent(RAW, new RawFunction());
     }
 
-    record Adapted<T>(T value, Function.Implicit<?, T> defaultFunction) {}
+    record Adapted<T>(T value, Function.Implicit<Value.Formatted, T> defaultFunction) {}
 
-    public Optional<Value> tryImplicit(Locale locale, Object value) {
+    public Optional<Value.Formatted> tryImplicit(Locale locale, Object value) {
         Object actualValue = value instanceof Partial(Object wrapped, var _)
                 ? wrapped
                 : value;
@@ -43,12 +45,16 @@ public class Functions {
                 .flatMap(adapted ->
                         callFunction(adapted.defaultFunction, new Context(locale), new Arguments<>(List.of(adapted.value)), new Options(resolveParams(value, Map.of())))
                         .toOptional(log::warn)
+                )
+                .or(() -> fallbackToToString
+                        ? Optional.of(new Value.Text(value.toString()))
+                        : Optional.empty()
                 );
     }
 
     @SuppressWarnings("unchecked")
-    public  <T> Optional<? extends Value.Formatted> call(Locale locale, String funcName, List<? extends T> positional, final Map<String, Object> named) {
-        Function<?, T> function = (Function<?, T>) functions.get(funcName);
+    public  <T> Optional<Value.Formatted> call(Locale locale, String funcName, List<? extends T> positional, final Map<String, Object> named) {
+        Function<Value.Formatted, T> function = (Function<Value.Formatted, T>) functions.get(funcName);
 
         Context context = new Context(locale);
 
@@ -89,7 +95,7 @@ public class Functions {
         return functions.values()
                 .stream()
                 .filter(Function.Implicit.class::isInstance)
-                .map(function -> (Function.Implicit<?, T>) function)
+                .map(function -> (Function.Implicit<Value.Formatted, T>) function)
                 .flatMap(function -> function.acceptableTypes()
                         .stream()
                         .map(type -> Proteus.global().convert(value, Type.dynamic(value), Type.of(type)))
