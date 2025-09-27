@@ -121,12 +121,16 @@ public class Formatter {
     private Value computeExpression(Task task, InlineExpression expression, boolean implicitResolve) {
         return switch (expression) {
             case InlineExpression.StringLiteral(String value) -> new Value.Text(value);
-            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value).orElseGet(() -> new Value.Raw(value));
+            case InlineExpression.NumberLiteral(double value) -> functions.tryImplicit(task.locale(), value)
+                    .map(Value.class::cast)
+                    .orElseGet(() -> new Value.Raw(value));
             case InlineExpression.VariableReference(String id) -> {
                 Object placeholder = task.variables().get(id);
                 if (!implicitResolve) yield new Value.Raw(placeholder);
 
-                yield functions.tryImplicit(task.locale(), placeholder).orElseGet(() -> new Value.Raw(placeholder));
+                yield functions.tryImplicit(task.locale(), placeholder)
+                        .map(Value.class::cast)
+                        .orElseGet(() -> new Value.Raw(placeholder));
             }
 
             case InlineExpression.FunctionalReference(String id, List<Argument> arguments) -> {
