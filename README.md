@@ -24,10 +24,10 @@ Important! I'm not going to explain how fluent works in general. This guide is p
 about how this library implements the fluent functionality. Knowledge about the project's
 syntax and concepts are required.
 
-To start using this library, you have to create an instance of the `Fluent` class.
-This class takes one constructor parameter, which is the fallback locale to be used.
+To start using this library, you have to create an instance of the `Fluava` class by 
+calling `Fluava#create(Locale)` or `Fluava#builder(Locale)`.
 
-The `Fluent` class serves as the main entry point to the library, providing several 
+The `Fluava` class serves as the main entry point to the library, providing several 
 helpful methods to create and load resource and bundles.
 
 ### Resources
@@ -36,12 +36,12 @@ the locale and basename.
 
 The fluents file content are structured according to the [Guide here](https://projectfluent.org/fluent/guide/).
 
-They can be loaded from raw strings by calling `Fluent#of(String, Locale)` or from disk by calling
-`Fluent#of(Path, Locale)`. In that case the resulting `Resource` of course only consists of this one file.
+They can be loaded from raw strings by calling `Fluava#of(String, Locale)` or from disk by calling
+`Fluava#of(Path, Locale)`. In that case the resulting `Resource` of course only consists of this one file.
 
 ### Bundles
 Bundles are a collection of multiple resources with the same basename but different locales.
-They can be loaded by calling `Fluent#loadBundle(String)` and the basename as the parameter.
+They can be loaded by calling `Fluava#loadBundle(String)` and the basename as the parameter.
 
 The load process of Bundles are currently limited to the classpath and very similar to how java's
 ResourceBundles work but with a more flexible directory structure.
@@ -66,8 +66,8 @@ fluent placeables with their real world value.
 ### Code Example
 
 ```java
-// create fluent instance with englisch as the fallback locale
-Fluent fluent = new Fluent(Locale.ENGLISH);
+// create Fluava instance with englisch as the fallback locale
+Fluava fluava = Fluava.create(Locale.ENGLISH);
 
 // load a bundle with the basename "app"
 Bundle app = fluent.loadBundle("app");
@@ -95,7 +95,7 @@ with the interface `Function.Implicit`.
 If in a fluent messages a variables is referenced without an enclosing function. The implicit
 function for this variables will be searched and called.
 
-Often times there are implicit function for classes that represent similar data to your ones.
+Often, there are implicit functions that support classes that are modeling data very similar to those used in your application.
 Just think about a custom "Date" class you receive from the database. Now to include
 this "Date" class in an i18n message you normally would need to manually convert
 this to some built-in supported one or write a custom function for it. 
