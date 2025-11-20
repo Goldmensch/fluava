@@ -19,7 +19,7 @@ Fluava is published on maven central.
 implementation("dev.goldmensch:fluava:VERSION")
 ```
 
-## Usage Guice
+## Usage
 Important! I'm not going to explain how fluent works in general. This guide is primary
 about how this library implements the fluent functionality. Knowledge about the project's
 syntax and concepts are required.
