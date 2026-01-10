@@ -67,6 +67,7 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#fallback(java.util.Locale)" tabindex="0">fallback(Locale)</a></li>
 <li><a href="#functions(java.util.function.Consumer)" tabindex="0">functions(Consumer)</a></li>
+<li><a href="#bundleRoot(java.lang.String)" tabindex="0">bundleRoot(String)</a></li>
 <li><a href="#build()" tabindex="0">build()</a></li>
 </ol>
 </li>
@@ -126,13 +127,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Builds a new <a href="Fluava.html" title="class in dev.goldmensch.fluava"><code>Fluava</code></a> instance based on the configuration made in this builder.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava">FluavaBuilder</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fallback(java.util.Locale)" class="member-name-link">fallback</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;fallback)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#bundleRoot(java.lang.String)" class="member-name-link">bundleRoot</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the fallback locale to use when no message is found for a locale.</div>
+<div class="block">Sets the &quot;root&quot; package that <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a>s should be loaded from.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava">FluavaBuilder</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#functions(java.util.function.Consumer)" class="member-name-link">functions</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="FluavaBuilder.FunctionConfig.html" title="interface in dev.goldmensch.fluava">FluavaBuilder.FunctionConfig</a>&gt;&nbsp;consumer)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fallback(java.util.Locale)" class="member-name-link">fallback</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;fallback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the fallback locale to use when no message is found for a locale.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava">FluavaBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#functions(java.util.function.Consumer)" class="member-name-link">functions</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="FluavaBuilder.FunctionConfig.html" title="interface in dev.goldmensch.fluava">FluavaBuilder.FunctionConfig</a>&gt;&nbsp;consumer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Allows to configure the functionality related to <a href="function/Function.html" title="interface in dev.goldmensch.fluava.function"><code>Function</code></a>s.</div>
 </div>
 </div>
@@ -179,6 +185,29 @@ Defaults to <code>Locale.ENGLISH</code>.</div>
 <dd><code>consumer</code> - the configuration</dd>
 <dt>Returns:</dt>
 <dd>this instance of <a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava"><code>FluavaBuilder</code></a></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="bundleRoot(java.lang.String)">
+<h3>bundleRoot</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava">FluavaBuilder</a></span>&nbsp;<span class="element-name">bundleRoot</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</span></div>
+<div class="block"><p>Sets the &quot;root&quot; package that <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a>s should be loaded from.</p>
+<p>If you set this to &quot;localization&quot;, the bundle &quot;msg&quot; will be loaded from &quot;localization/msg&quot;.</p>
+</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>path</code> - the root path to be set</dd>
+<dt>Returns:</dt>
+<dd>this instance of <a href="FluavaBuilder.html" title="class in dev.goldmensch.fluava"><code>FluavaBuilder</code></a></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a></li>
+</ul>
+</dd>
 </dl>
 </div>
 </section>

@@ -104,6 +104,9 @@ The fluent files are searched lazily, similar to how <a href="https://docs.oracl
 </ol>
 <p>If a key isn't found in any of the above files, the same procedure will be done for the given &quot;fallback&quot; locale.
 If even then a key isn't found, the key will be returned as the &quot;translated value&quot; by any <a href="Resource.html" title="class in dev.goldmensch.fluava"><code>Resource</code></a>/<a href="Message.html" title="class in dev.goldmensch.fluava"><code>Message</code></a>.</p>
+<p>You can set a root package that <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a>s should be loaded from with <a href="FluavaBuilder.html#bundleRoot(java.lang.String)"><code>FluavaBuilder.bundleRoot(String)</code></a>.
+The bundle's classpath path will be prefixed with it.
+For example, if the root path is &quot;localization&quot;, a bundle named &quot;msg&quot; will be loaded from &quot;localization/msg&quot;.</p>
 </div>
 </div>
 </section>

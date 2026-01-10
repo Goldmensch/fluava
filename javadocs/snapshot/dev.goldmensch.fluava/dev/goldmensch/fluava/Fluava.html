@@ -133,7 +133,7 @@ String failMessage = appBundle.apply(Locale.GERMAN, &quot;fail&quot;, Map.of(&qu
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Bundle.html" title="class in dev.goldmensch.fluava">Bundle</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadBundle(java.lang.String)" class="member-name-link">loadBundle</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;base)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Creates a new <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a> with the given base path</div>
+<div class="block">Creates a new <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a> with the given base path, that will be loaded from the classpath.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Result.html" title="interface in dev.goldmensch.fluava">Result</a><wbr>&lt;<a href="Resource.html" title="class in dev.goldmensch.fluava">Resource</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#of(java.lang.String,java.util.Locale)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;content,
@@ -224,7 +224,12 @@ This can be used to crate &quot;sub instances&quot; which allows to override cer
 <h3>loadBundle</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Bundle.html" title="class in dev.goldmensch.fluava">Bundle</a></span>&nbsp;<span class="element-name">loadBundle</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;base)</span></div>
-<div class="block">Creates a new <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a> with the given base path</div>
+<div class="block"><p>Creates a new <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a> with the given base path, that will be loaded from the classpath.</p>
+<p>If the bundle is in a subdirectory/subpackage, you can add it to the base of the bundle.</p>
+<p>For example, a bundle called &quot;msg&quot; sits in a subdirectly called &quot;localization&quot;.
+The base path you have to use is &quot;localization/msg&quot;.</p>
+<p>You can also set a base path that is applied to all bundles via <a href="FluavaBuilder.html#bundleRoot(java.lang.String)"><code>FluavaBuilder.bundleRoot(String)</code></a>.</p>
+</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the newly creates <a href="Bundle.html" title="class in dev.goldmensch.fluava"><code>Bundle</code></a></dd>
