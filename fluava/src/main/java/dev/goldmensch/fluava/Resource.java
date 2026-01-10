@@ -45,10 +45,21 @@ public class Resource {
 
     record Pair(Locale locale, AstResource resource) {}
 
-    /// @param key the message key
-    /// @return the found message
+    /// Searches this [Resource] for the given key and returns the found message.
+    /// If no message could be found, an empty message is returned which just return the messages key.
+    ///
+    /// The key may also refer to an attribute of a message. The attribute's name is added after a `.`.
+    /// For example, take `my-message.attribute`, where `my-message` is the message key and 'attribute' the attribute name.
+    ///
+    /// @param key the key
+    /// @return the found message (or attribute)
     public Message message(String key) {
-        return get(key, Level::messages);
+        String[] split = key.split("[.]", 2);
+
+        Message message = get(split[0], Level::messages);
+        return split.length == 2
+                ? message.withAttributeKey(split[1])
+                : message;
     }
 
     /// @param key the term key

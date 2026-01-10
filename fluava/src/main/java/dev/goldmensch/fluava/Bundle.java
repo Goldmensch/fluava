@@ -45,6 +45,9 @@ public class Bundle {
         this.base = base;
     }
 
+    /// Searches this bundle for the specified message.
+    /// If the key contains an attribute, the attribute is returned as the message. (see [Resource#message(String)])
+    ///
     /// @param key the key of the searched message
     /// @param locale the locale to be searched for
     ///
@@ -55,6 +58,8 @@ public class Bundle {
 
     /// Searches the bundle for the specific key and locale according to the rules stated above.
     /// If found, the specified variables will be applied to the placeable in the message.
+    ///
+    /// If the key contains an attribute, the attribute is returned as the message. (see [Resource#message(String)])
     ///
     /// @param key the key of the searched message
     /// @param locale the locale to be searched for

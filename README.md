@@ -63,6 +63,10 @@ associated with a key. The in code representation is the `Message` class and pro
 methods for getting the messages content and attributes. That class also supports replacing
 fluent placeables with their real world value.
 
+You can also access a message's attributes. You can either call `Message#interpolated(Map<String, Object>)`
+or directly refer to the attribute in the message key: `Resource.message("my-message.attribute")` or
+`Bundle.apply("my-message.attribute", Map.of())`.
+
 ### Code Example
 
 ```java
