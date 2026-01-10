@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class CLDRGenerateTask extends DefaultTask {
 
-    private static final int SUPPORTED_CLDR_VERSION = 47;
+    private static final int SUPPORTED_CLDR_VERSION = 48;
 
     private static final URI CARDINAL_URL = URI.create("https://raw.githubusercontent.com/unicode-org/cldr-json/refs/heads/main/cldr-json/cldr-core/supplemental/plurals.json");
     private static final URI ORDINAL_URL = URI.create("https://raw.githubusercontent.com/unicode-org/cldr-json/refs/heads/main/cldr-json/cldr-core/supplemental/ordinals.json");
