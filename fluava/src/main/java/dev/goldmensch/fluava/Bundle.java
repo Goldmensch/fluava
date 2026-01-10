@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /// A bundle is a collection of several fluent resources for multiple locales.
-/// The fluent files are searched lazily, similar to how [java.util.ResourceBundle] work.
+/// The fluent files are searched lazily, similar to how [ResourceBundle] work.
 ///
 /// The classpath will be searched for a fluent file given a specific locale according to following order:
 ///
@@ -26,6 +26,10 @@ import java.util.stream.Stream;
 ///
 /// If a key isn't found in any of the above files, the same procedure will be done for the given "fallback" locale.
 /// If even then a key isn't found, the key will be returned as the "translated value" by any [Resource]/[Message].
+///
+/// You can set a root package that [Bundle]s should be loaded from with [FluavaBuilder#bundleRoot(String)].
+/// The bundle's classpath path will be prefixed with it.
+/// For example, if the root path is "localization", a bundle named "msg" will be loaded from "localization/msg".
 ///
 public class Bundle {
     public static final Logger log = LoggerFactory.getLogger(Bundle.class);

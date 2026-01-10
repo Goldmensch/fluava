@@ -25,6 +25,7 @@ import java.util.Locale;
 /// String failMessage = appBundle.apply(Locale.GERMAN, "fail", Map.of("msg", err.msg()));
 /// ```
 public class Fluava {
+    private final String bundleRoot;
     private final Locale fallback;
     private final Functions functions;
     private final FluentParser parser = new FluentParser();
@@ -32,7 +33,8 @@ public class Fluava {
 
     /// @param fallback the fallback locale to use
     /// @param functionConfig the function configuration to use
-    Fluava(Locale fallback, FunctionConfigImpl functionConfig) {
+    Fluava(String bundleRoot, Locale fallback, FunctionConfigImpl functionConfig) {
+        this.bundleRoot = bundleRoot;
         this.fallback = fallback;
         this.functionConfig = functionConfig;
         this.functions = new Functions(functionConfig);
@@ -76,11 +78,22 @@ public class Fluava {
         };
     }
 
-    /// Creates a new [Bundle] with the given base path
+    /// Creates a new [Bundle] with the given base path, that will be loaded from the classpath.
+    ///
+    /// If the bundle is in a subdirectory/subpackage, you can add it to the base of the bundle.
+    ///
+    /// For example, a bundle called "msg" sits in a subdirectly called "localization".
+    /// The base path you have to use is "localization/msg".
+    ///
+    /// You can also set a base path that is applied to all bundles via [FluavaBuilder#bundleRoot(String)].
     ///
     /// @return the newly creates [Bundle]
     public Bundle loadBundle(String base) {
-        return new Bundle(this, fallback, base);
+        String path = bundleRoot != null
+                ? bundleRoot + "/" + base
+                : base;
+
+        return new Bundle(this, fallback, path);
     }
 
     Result<AstResource> parse(String content) {

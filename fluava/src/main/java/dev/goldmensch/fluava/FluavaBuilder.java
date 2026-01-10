@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 ///
 /// The default value for the fallback locale is `Locale.ENGLISH`.
 public final class FluavaBuilder {
+    private String bundleRoot = null;
     private final FunctionConfigImpl functionConfig;
     private Locale fallback = Locale.ENGLISH;
 
@@ -41,11 +42,25 @@ public final class FluavaBuilder {
         return this;
     }
 
+    /// Sets the "root" package that [Bundle]s should be loaded from.
+    ///
+    /// If you set this to "localization", the bundle "msg" will be loaded from "localization/msg".
+    ///
+    /// @param path the root path to be set
+    /// @return this instance of [FluavaBuilder]
+    ///
+    /// @see Bundle
+    public FluavaBuilder bundleRoot(String path) {
+        bundleRoot = path;
+        return this;
+    }
+
     /// Builds a new [Fluava] instance based on the configuration made in this builder.
     ///
     /// @return the [Fluava] instance
     public Fluava build() {
         return new Fluava(
+                bundleRoot,
                 fallback,
                 functionConfig
         );
