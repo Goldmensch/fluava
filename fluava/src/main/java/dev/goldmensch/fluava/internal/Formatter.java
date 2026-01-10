@@ -126,6 +126,8 @@ public class Formatter {
                     .orElseGet(() -> new Value.Raw(value));
             case InlineExpression.VariableReference(String id) -> {
                 Object placeholder = task.variables().get(id);
+
+                if (placeholder == null) yield new Value.Raw(null);
                 if (!implicitResolve) yield new Value.Raw(placeholder);
 
                 yield functions.tryImplicit(task.locale(), placeholder)
