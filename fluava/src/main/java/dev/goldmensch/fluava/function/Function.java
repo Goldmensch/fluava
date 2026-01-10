@@ -1,7 +1,9 @@
 package dev.goldmensch.fluava.function;
 
 import dev.goldmensch.fluava.Result;
+import dev.goldmensch.fluava.function.util.TriFunction;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 
@@ -15,7 +17,41 @@ import java.util.Collection;
 /// [Function.Implicit] is a special case, were the function only takes one positional argument, the "value".
 /// This special sort of function is automatically applied if any of the variables match (or can be converted via proteus to) a class
 /// specified in [Implicit#acceptableTypes()].
+///
+@FunctionalInterface
 public interface Function<R extends Value.Formatted, T> {
+
+    /// Constructs a new [Function.Implicit] for the specified types.
+    ///
+    /// @param function the transforming function ([Function.Implicit#apply(Context, Object, Options)])
+    /// @param acceptableTypes the types this function accepts ([Implicit#acceptableTypes()])
+    /// @return the newly created instance of [Function]
+    ///
+    /// @see Function.Implicit
+    static <R extends Value.Formatted, T> Function<R, T> implicit(TriFunction<Context, T, Options, Result<R>> function, Collection<Class<? extends T>> acceptableTypes) {
+        return new Implicit<>() {
+            @Override
+            public Result<R> apply(Context context, T value, Options options) throws FunctionException {
+                return function.apply(context, value, options);
+            }
+
+            @Override
+            public Collection<Class<? extends T>> acceptableTypes() {
+                return acceptableTypes;
+            }
+        };
+    }
+
+    /// Constructs a new [Function.Implicit] for the specified types.
+    ///
+    /// @param function the transforming function ([Function.Implicit#apply(Context, Object, Options)])
+    /// @param acceptableTypes the types this function accepts ([Implicit#acceptableTypes()])
+    /// @return the newly created instance of [Function]
+    ///
+    /// @see Function.Implicit
+    static <R extends Value.Formatted, T> Function<R, T> implicit(TriFunction<Context, T, Options, Result<R>> function, Class<? extends T>... acceptableTypes) {
+        return implicit(function, Arrays.asList(acceptableTypes));
+    }
 
     /// Applies this function to the provided value and options.
     ///
