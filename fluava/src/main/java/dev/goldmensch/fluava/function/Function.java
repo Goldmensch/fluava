@@ -49,6 +49,7 @@ public interface Function<R extends Value.Formatted, T> {
     /// @return the newly created instance of [Function]
     ///
     /// @see Function.Implicit
+    @SafeVarargs
     static <R extends Value.Formatted, T> Function<R, T> implicit(TriFunction<Context, T, Options, Result<R>> function, Class<? extends T>... acceptableTypes) {
         return implicit(function, Arrays.asList(acceptableTypes));
     }
