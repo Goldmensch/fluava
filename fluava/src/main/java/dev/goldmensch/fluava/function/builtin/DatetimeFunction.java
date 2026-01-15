@@ -43,6 +43,6 @@ public class DatetimeFunction implements Function.Implicit<Value.Text, Temporal>
 
     @Override
     public Collection<Class<? extends Temporal>> acceptableTypes() {
-        return List.of(ZonedDateTime.class, LocalDate.class);
+        return List.of(ZonedDateTime.class, LocalDateTime.class);
     }
 }
