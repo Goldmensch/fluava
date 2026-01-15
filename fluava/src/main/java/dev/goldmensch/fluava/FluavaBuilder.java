@@ -21,6 +21,7 @@ public final class FluavaBuilder {
     FluavaBuilder(Fluava fluava) {
         this.functionConfig = fluava.functionConfig();
         this.fallback = fluava.fallback();
+        this.bundleRoot = fluava.bundleRoot();
     }
 
     /// Sets the fallback locale to use when no message is found for a locale.
