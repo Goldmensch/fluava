@@ -113,7 +113,7 @@ public class Fluava {
         return fallback;
     }
 
-    public String bundleRoot() {
+    String bundleRoot() {
         return bundleRoot;
     }
 }
