@@ -112,4 +112,8 @@ public class Fluava {
     Locale fallback() {
         return fallback;
     }
+
+    String bundleRoot() {
+        return bundleRoot;
+    }
 }
