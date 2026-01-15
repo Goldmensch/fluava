@@ -9,6 +9,7 @@ dev.goldmensch.fluava.ast.tree.pattern
 dev.goldmensch.fluava.function
 dev.goldmensch.fluava.function.builtin
 dev.goldmensch.fluava.function.internal
+dev.goldmensch.fluava.function.util
 dev.goldmensch.fluava.internal
 module:dev.goldmensch.fluava.cldrplurals
 dev.goldmensch.cldrplurals
