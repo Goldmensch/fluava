@@ -4,6 +4,8 @@ import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.function.internal.FunctionConfigImpl;
 import dev.goldmensch.fluava.function.internal.Functions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +27,7 @@ import java.util.Locale;
 /// String failMessage = appBundle.apply(Locale.GERMAN, "fail", Map.of("msg", err.msg()));
 /// ```
 public class Fluava {
+    private static final Logger log = LoggerFactory.getLogger(Fluava.class);
     private final String bundleRoot;
     private final Locale fallback;
     private final Functions functions;
@@ -92,6 +95,8 @@ public class Fluava {
         String path = bundleRoot != null
                 ? bundleRoot + "/" + base
                 : base;
+
+        log.debug("Creating bundle with path: {}", path);
 
         return new Bundle(this, fallback, path);
     }

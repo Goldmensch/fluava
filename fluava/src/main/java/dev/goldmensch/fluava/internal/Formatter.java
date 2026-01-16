@@ -24,6 +24,7 @@ public class Formatter {
     public static final Formatter EMPTY = new Formatter();
     private static final Logger log = LoggerFactory.getLogger(Formatter.class);
 
+    private final String key;
     private final Functions functions;
     private final FList<PatternElement> components;
     private final Resource resource;
@@ -32,12 +33,14 @@ public class Formatter {
         this.components = null;
         this.resource = null;
         this.functions = null;
+        this.key = null;
     }
 
-    public Formatter(Functions functions, Resource resource, Pattern ast) {
+    public Formatter(Functions functions, Resource resource, Pattern ast, String key) {
         this.functions = Objects.requireNonNull(functions);
         this.components = Objects.requireNonNull(ast).components();
         this.resource = Objects.requireNonNull(resource);
+        this.key = key;
     }
 
     public String apply(Locale locale, Map<String, Object> variables) {
@@ -101,7 +104,7 @@ public class Formatter {
     }
 
     private void addPattern(Task task, Pattern pattern) {
-        String formatted = new Formatter(functions, resource, pattern).apply(task.locale(), task.variables());
+        String formatted = new Formatter(functions, resource, pattern, key).apply(task.locale(), task.variables());
         task.append(formatted);
     }
 
@@ -110,7 +113,7 @@ public class Formatter {
         Value computed = computeExpression(task, expression, true);
 
         if (!(computed instanceof Value.Formatted formatted)) {
-            log.warn("Couldn't format expression");
+            log.warn("Couldn't format message (key = {}), invalid expression: {}", key, expression);
             builder.append("null");
             return;
         }

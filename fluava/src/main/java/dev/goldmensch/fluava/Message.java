@@ -48,22 +48,22 @@ public class Message {
         this.key = astMessage.id();
         this.locale = Objects.requireNonNull(locale);
         this.contentFormatter = astMessage.content()
-                .map(msg -> new Formatter(functions, leakingResource, msg))
+                .map(msg -> new Formatter(functions, leakingResource, msg, key))
                 .orElse(Formatter.EMPTY);
 
         this.attributeFormatters = astMessage.attributes()
                 .stream()
-                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern())));
+                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern(), key)));
     }
 
     Message(Functions functions, Locale locale, Resource leakingResource, Term astTerm) {
         this.attributeKey = null;
         this.key = astTerm.id();
         this.locale = Objects.requireNonNull(locale);
-        this.contentFormatter = new Formatter(functions, leakingResource, astTerm.pattern());
+        this.contentFormatter = new Formatter(functions, leakingResource, astTerm.pattern(), key);
         this.attributeFormatters = astTerm.attributes()
                 .stream()
-                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern())));
+                .collect(Collectors.toUnmodifiableMap(Attribute::id, (attribute) -> new Formatter(functions, leakingResource, attribute.pattern(), key)));
     }
 
     /// Returns the message after applying the given variables.

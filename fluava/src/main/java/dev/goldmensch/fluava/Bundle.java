@@ -103,6 +103,9 @@ public class Bundle {
     }
 
     private SequencedCollection<Resource.Pair> loadSources(Locale l) {
+
+        log.debug("Loading sources of bundle with base {} for locale {}", base, l);
+
         return Stream.of(
                         new Bundle.Pair(l, "%s_%s_%s.ftl".formatted(l.getLanguage(), l.getCountry(), l.getVariant())),
                         new Bundle.Pair(Locale.of(l.getLanguage(), l.getCountry()), "%s_%s.ftl".formatted(l.getLanguage(), l.getCountry())),
@@ -122,6 +125,9 @@ public class Bundle {
 
     private AstResource readFile(String prefix, String name) {
         String path = "/%s%s".formatted(prefix, name);
+
+        log.debug("Reading file from classpath: {}", path);
+
         try (InputStream in = this.getClass().getResourceAsStream(path)) {
             if (in == null) return null;
             String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);

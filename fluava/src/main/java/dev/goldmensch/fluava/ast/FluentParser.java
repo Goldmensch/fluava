@@ -7,6 +7,8 @@ import io.github.parseworks.Combinators;
 import io.github.parseworks.FList;
 import io.github.parseworks.Parser;
 import io.github.parseworks.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
@@ -15,6 +17,8 @@ import static dev.goldmensch.fluava.ast.MiscP.blank_block;
 import static io.github.parseworks.Combinators.*;
 
 public final class FluentParser implements Function<String, Result<AstResource>> {
+
+    private static final Logger log = LoggerFactory.getLogger(FluentParser.class);
 
     // Junk
     private static final Parser<Character, String> junk_line = any(Character.class)
@@ -63,6 +67,13 @@ public final class FluentParser implements Function<String, Result<AstResource>>
     public Result<AstResource> apply(String s) {
         io.github.parseworks.Result<Character, AstResource> result = resource.parseAll(s);
         if (result.isSuccess()) {
+            AstResource resource = result.get();
+            for (AstResource.ResourceComponent component : resource.components()) {
+                if (!(component instanceof AstResource.ResourceComponent.Junk(String content))) continue;
+
+                log.warn("Couldn't parse fluent file content {}", content);
+            }
+
             return new Result.Success<>(result.get());
         }
         return new Result.Failure<>(result.fullErrorMessage());
