@@ -74,6 +74,19 @@ public class CallArgumentsTest {
         Assertions.assertEquals(FList.of(expected1, expected2), result.get());
     }
 
+    /// uses ExpressionP#number_literal, ExpressionP#string_literal
+    @Test
+    void named_number_and_string_literal__success() {
+        String content = "(name1: 123456, name2: \"foo\")";
+        Result<Character, FList<Argument>> result = parseCallArguments(content);
+
+        Assertions.assertTrue(result.isSuccess());
+
+        Argument.Named expected1 = new Argument.Named("name1", new InlineExpression.NumberLiteral(123456));
+        Argument.Named expected2 = new Argument.Named("name2", new InlineExpression.StringLiteral("foo"));
+        Assertions.assertEquals(FList.of(expected1, expected2), result.get());
+    }
+
     /// uses ExpressionP#inline_expression
     /// variable reference could be any inline expression
     @Test
