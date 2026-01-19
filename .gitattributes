@@ -1,6 +1,10 @@
 #
 # https://help.github.com/articles/dealing-with-line-endings/
 #
+
+# Default: all text files use LF
+* text=auto eol=lf
+
 # Linux start script should use lf
 /gradlew        text eol=lf
 
