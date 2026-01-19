@@ -19,23 +19,7 @@
         system,
         ...
       }: let
-        jdk-linux-base = pkgs.fetchurl {
-            url = "https://raw.githubusercontent.com/NixOS/nixpkgs/c04d7170e047829f03c514abb5a1aa98f58f7b80/pkgs/development/compilers/temurin-bin/jdk-linux-base.nix";
-            hash = "sha256-uAp2+F6fAlVXKLdwsl8aYOt3fUi/mYj40wYZSUeNNQw=";
-        };
-
-        common = opts: pkgs.callPackage (import jdk-linux-base opts) { };
-
-        jdk = common { sourcePerArch = {
-            packageType = "jdk";
-            vmType = "hotspot";
-            x86_64 = {
-                build = "9";
-                sha256 = "78832cb5ea4074f2215cde0d01d6192d09c87636fc24b36647aea61fb23b8272";
-                url = "https://github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%2B9/OpenJDK24U-jdk_x64_linux_hotspot_24.0.1_9.tar.gz";
-                version = "24.0.1";
-            };
-        };};
+        jdk = pkgs.javaPackages.compiler.temurin-bin.jdk-25;
 
         gradle = pkgs.gradle.override {
             javaToolchains = [
