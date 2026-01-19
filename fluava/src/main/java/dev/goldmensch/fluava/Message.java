@@ -129,6 +129,6 @@ public class Message {
     }
 
     Message withAttributeKey(String key) {
-        return new Message(key, locale, contentFormatter, attributeFormatters, key);
+        return new Message("%s.%s".formatted(this.key, key), locale, contentFormatter, attributeFormatters, key);
     }
 }
