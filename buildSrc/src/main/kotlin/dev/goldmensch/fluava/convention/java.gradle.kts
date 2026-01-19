@@ -7,11 +7,11 @@ plugins {
 }
 
 java {
-    targetCompatibility = JavaVersion.VERSION_24
-    sourceCompatibility = JavaVersion.VERSION_24
+    targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_25
 
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 
     withSourcesJar()
