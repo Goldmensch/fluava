@@ -2,15 +2,15 @@ package dev.goldmensch.fluava.ast;
 
 class Latin {
     static boolean upperAlpha(char c) {
-        return range(c, 0x41, 0x5A);
+        return range(c, 'A', 'Z');
     }
 
     static boolean lowerAlpha(char c) {
-        return range(c, 0x61, 0x7A);
+        return range(c, 'a', 'z');
     }
 
     static boolean number(char ch) {
-        return range(ch, 0x30, 0x39);
+        return range(ch, '0', '9');
     }
 
     static boolean hexChar(char ch) {
