@@ -107,7 +107,7 @@ class PatternP {
 
         if (result.getLast() instanceof PatternElement.Text(String content)) {
             result.removeLast();
-            String stripped = content.stripTrailing();
+            String stripped = content.replaceAll(" +$", "");
             if (!stripped.isBlank()) {
                 result.addLast(new PatternElement.Text(stripped));
             }

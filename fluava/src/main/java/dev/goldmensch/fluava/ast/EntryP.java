@@ -70,5 +70,5 @@ public class EntryP {
     );
 
     // Entry
-    static final Parser<Character, Entry> entry = entry_without_new_line.thenSkip(line_end);
+    static final Parser<Character, Entry> entry = entry_without_new_line.thenSkip(line_end.<Void>as(null).or(eof()));
 }

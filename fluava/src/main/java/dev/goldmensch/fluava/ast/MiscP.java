@@ -13,10 +13,12 @@ class MiscP {
 
     static final Parser<Character, Character> special_text_char = chr('{').or(chr('}'));
 
+
     static final Parser<Character, Character> line_end = oneOf(
             string("\r\n").as('\n'),
             chr('\n')
     );
+
     static final Parser<Character, Character> text_char = any(Character.class)
             .not(oneOf(special_text_char, line_end));
 
