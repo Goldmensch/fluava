@@ -68,7 +68,9 @@ public class SelectExpressionTest {
         SelectExpression expected = new SelectExpression(
                 new InlineExpression.VariableReference("var"),
                 new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
-                FList.of());
+                FList.of(
+                        new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo"))))
+                ));
 
         Assertions.assertEquals(expected, result.get());
     }
@@ -90,8 +92,9 @@ public class SelectExpressionTest {
                 new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
-                        new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))
-                ))
+                        new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))),
+                        new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo"))))
+                )
         );
 
         Assertions.assertEquals(expected, result.get());
@@ -113,6 +116,7 @@ public class SelectExpressionTest {
                 new InlineExpression.VariableReference("var"),
                 new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
+                        new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
                         new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))
                         ))
@@ -138,6 +142,7 @@ public class SelectExpressionTest {
                 new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
+                        new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                         new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))
                         ))
         );
