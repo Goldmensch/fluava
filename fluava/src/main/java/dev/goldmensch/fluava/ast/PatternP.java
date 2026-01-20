@@ -14,7 +14,7 @@ import static io.github.parseworks.Combinators.*;
 @SuppressWarnings("unchecked")
 class PatternP {
 
-    private record TypedPatternElement(PatternElement element, Type type) {
+    record TypedPatternElement(PatternElement element, Type type) {
         private enum Type {
             BLOCK_BLANK,
             OTHER

@@ -147,7 +147,7 @@ class ExpressionP {
                 message_reference.map(InlineExpression.MessageReference::new),
                 term_reference.map(InlineExpression.TermReference::new),
                 variable_reference.map(InlineExpression.VariableReference::new),
-                (Parser<Character, InlineExpression>) (Parser<Character, ?>) inline_placeable
+                (Parser<Character, InlineExpression>) (Parser<Character, ?>) inline_placeable.map(PatternP.TypedPatternElement::element)
         )));
     }
 }
