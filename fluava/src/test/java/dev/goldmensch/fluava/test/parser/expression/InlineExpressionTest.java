@@ -45,11 +45,20 @@ public class InlineExpressionTest {
     /// uses ExpressionP#functional_reference - call arguments tested in [CallArgumentsTest]
     @Test
     void functional_reference__success() {
-        String content = "abc()";
+        String content = "ABC()";
         Result<Character, InlineExpression> result = parseInline(content);
 
         Assertions.assertTrue(result.isSuccess());
-        Assertions.assertEquals(new InlineExpression.FunctionalReference("abc", List.of()), result.get());
+        Assertions.assertEquals(new InlineExpression.FunctionalReference("ABC", List.of()), result.get());
+    }
+
+    /// uses ExpressionP#functional_reference - call arguments tested in [CallArgumentsTest]
+    @Test
+    void functional_reference_with_lower_characters__error() {
+        String content = "abc()";
+        Result<Character, InlineExpression> result = parseInline(content);
+
+        Assertions.assertTrue(result.isError());
     }
 
     /// uses ExpressionP#message_reference, MiscP#identifier (tested in [IdentifierTest])

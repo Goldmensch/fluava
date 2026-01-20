@@ -15,9 +15,11 @@ import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JsonFormatter {
@@ -55,30 +57,38 @@ public class JsonFormatter {
     }
 
     private JSONObject comment(Comment comment) {
+        String type = switch (comment.type()) {
+            case DOUBLE -> "GroupComment";
+            case SINGLE -> "Comment";
+            case TRIPLE -> "ResourceComment";
+        };
+
         return new JSONObject()
-                .put("type", "Comment")
+                .put("type", type)
                 .put("content", escape(comment.content()));
     }
 
     private JSONObject message(AstMessage message) {
-        JSONObject value = message.content()
+        Object value = message.content()
                 .map(this::pattern)
-                .orElse(null);
+                .map(Object.class::cast)
+                .orElse(JSONObject.NULL);
 
         return new JSONObject()
                 .put("type", "Message")
-                .put("comment", (Object) null)
                 .put("id", identifier(message.id()))
                 .put("value", value)
-                .put("attributes", attributes(message.attributes()));
+                .put("attributes", attributes(message.attributes()))
+                .put("comment", commentInline(message.comment()));
     }
 
     private JSONObject term(Term term) {
         return new JSONObject()
                 .put("type", "Term")
                 .put("id", identifier(term.id()))
-                .put("value", term.pattern())
-                .put("attributes", attributes(term.attributes()));
+                .put("value", pattern(term.pattern()))
+                .put("attributes", attributes(term.attributes()))
+                .put("comment", commentInline(term.comment()));
     }
 
     private JSONArray attributes(List<Attribute> attributes) {
@@ -90,6 +100,15 @@ public class JsonFormatter {
                 )
                 .toList();
         return new JSONArray(elements);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Object commentInline(Optional<String> content) {
+        return content
+                .map(comment -> ((Object) new JSONObject()
+                        .put("type", "Comment")
+                        .put("content", comment)))
+                .orElse(JSONObject.NULL);
     }
 
     private JSONObject pattern(Pattern pattern) {
@@ -155,7 +174,7 @@ public class JsonFormatter {
                     .put("value", content);
             case InlineExpression.NumberLiteral(double number) -> new JSONObject()
                     .put("type", "NumberLiteral")
-                    .put("value", number);
+                    .put("value", BigDecimal.valueOf(number).stripTrailingZeros().toPlainString());
             case InlineExpression.VariableReference(String id) -> new JSONObject()
                     .put("type", "VariableReference")
                     .put("id", identifier(id));
@@ -169,14 +188,14 @@ public class JsonFormatter {
         return new JSONObject()
                 .put("type", "MessageReference")
                 .put("id", identifier(reference.id()))
-                .put("attribute", reference.attribute().map(this::identifier).orElse(null));
+                .put("attribute", reference.attribute().<Object>map(this::identifier).orElse(JSONObject.NULL));
     }
 
     private JSONObject termRef(InlineExpression.TermReference reference) {
         return new JSONObject()
                 .put("type", "TermReference")
                 .put("id", identifier(reference.id()))
-                .put("attribute", reference.attribute().map(this::identifier).orElse(null))
+                .put("attribute", reference.attribute().<Object>map(this::identifier).orElse(JSONObject.NULL))
                 .put("arguments", arguments(reference.arguments()));
     }
 
@@ -184,7 +203,8 @@ public class JsonFormatter {
 
         return new JSONObject()
                 .put("type", "FunctionReference")
-                .put("id", identifier(reference.id()));
+                .put("id", identifier(reference.id()))
+                .put("arguments", arguments(reference.arguments()));
     }
 
     private JSONObject arguments(List<Argument> arguments) {
@@ -214,6 +234,6 @@ public class JsonFormatter {
     }
 
     private String escape(String raw) {
-        return raw.replace("\n", "\\n");
+        return raw;
     }
 }

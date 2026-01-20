@@ -37,7 +37,8 @@ public class EntryP {
                     pattern.map(Pattern::new).then(attribute.zeroOrMany()).map(Pair::new),
                     Parser.<Character, Pattern>pure(null).then(attribute.many()).map(Pair::new)
             ))
-            .map(identifier -> content -> new AstMessage(identifier, Optional.ofNullable(content.left()), content.right()));
+            .thenSkip(line_end)
+            .map(identifier -> content -> new AstMessage(identifier, Optional.ofNullable(content.left()), content.right(), Optional.empty()));
 
     // Term
     private static final Parser<Character, Entry> term = chr('-')
@@ -47,7 +48,7 @@ public class EntryP {
             .thenSkip(opt_blank_inline)
             .then(pattern.map(Pattern::new))
             .then(attribute.zeroOrMany())
-            .map(Term::new);
+            .map(identifier -> pattern -> attributes -> new Term(identifier, pattern, attributes, Optional.empty()));
 
     // Comment
     private static final Parser<Character, Character> comment_char = any(Character.class).not(line_end);

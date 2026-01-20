@@ -7,8 +7,7 @@ import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import io.github.parseworks.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static dev.goldmensch.fluava.ast.MiscP.*;
 import static dev.goldmensch.fluava.ast.PatternP.inline_placeable;
@@ -70,14 +69,50 @@ class ExpressionP {
                         return arguments;
                     });
 
+    private static Result<Character, FList<Argument>> checkOrder(Result<Character, FList<Argument>> result) {
+        if (result.isError()) return result;
+        Input<Character> input = result.next();
+
+        FList<Argument> arguments = result.get();
+
+        boolean namedArea = false;
+        for (Argument current : arguments) {
+            if (current instanceof Argument.Named) {
+                namedArea = true;
+            } else if (namedArea) {
+                return Result.failure(input, "positional arguments can't come after named arguments!");
+            }
+        }
+
+        Set<String> knownNames = new HashSet<>();
+        for (Argument current : arguments) {
+            if (!(current instanceof Argument.Named(String name, var _))) continue;
+            if (!knownNames.add(name)) {
+                return Result.failure(input, "duplicate named argument: %s".formatted(name));
+            }
+        }
+
+        return result;
+    }
+
     private static final Parser<Character, FList<Argument>> call_arguments = blank.optional()
             .skipThen(chr('('))
             .skipThen(blank.optional())
-            .skipThen(argument_list)
+            .skipThen(new Parser<>(input -> {
+                Result<Character, FList<Argument>> result = argument_list.parse(input);
+                return checkOrder(result);
+            }))
             .thenSkip(blank.optional())
             .thenSkip(chr(')'));
 
-    private static final ApplyBuilder<Character, String, FList<Argument>> functional_reference = identifier
+
+
+    /// same as [MiscP#identifier] but disallows lower characters
+    private static final Parser<Character, String> function_identifier = chr(Latin::upperAlpha)
+            .then(chr(ch -> Latin.upperAlpha(ch) || Latin.number(ch) || ch == '_' || ch == '-').zeroOrMany())
+            .map(start -> following -> start.toString() + Utils.listToString(following));
+
+    private static final ApplyBuilder<Character, String, FList<Argument>> functional_reference = function_identifier
             .then(call_arguments);
 
     private static final Parser<Character, String> attribute_accessor = chr('.')

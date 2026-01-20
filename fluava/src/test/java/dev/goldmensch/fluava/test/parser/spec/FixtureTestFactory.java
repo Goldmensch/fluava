@@ -3,10 +3,7 @@ package dev.goldmensch.fluava.test.parser.spec;
 import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,13 +40,19 @@ public class FixtureTestFactory {
 
     private DynamicTest buildTest(String fluent, String json, String name) {
         return DynamicTest.dynamicTest("Test fixture %s".formatted(name), () -> {
+            System.out.println(name);
             FluentParser parser = new FluentParser();
             AstResource resource = parser.apply(fluent).orElseThrow();// should never throw
 
             JSONObject parsed = new JsonFormatter().toJson(resource);
             JSONObject expected = new JSONObject(json);
 
-            Assertions.assertEquals(expected, parsed);
+            if (!expected.similar(parsed)) {
+                AssertionFailureBuilder.assertionFailure()
+                        .expected(expected.toString(2))
+                        .actual(parsed.toString(2))
+                        .buildAndThrow();
+            }
         });
     }
 }
