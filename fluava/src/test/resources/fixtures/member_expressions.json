@@ -72,7 +72,11 @@
                                     "type": "Identifier",
                                     "name": "attr"
                                 },
-                                "arguments": null
+                                "arguments": {
+                                    "named": [],
+                                    "positional": [],
+                                    "type": "CallArguments"
+                                }
                             },
                             "variants": [
                                 {

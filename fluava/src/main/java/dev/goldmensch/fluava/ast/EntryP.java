@@ -3,8 +3,8 @@ package dev.goldmensch.fluava.ast;
 import dev.goldmensch.fluava.ast.tree.entry.Comment;
 import dev.goldmensch.fluava.ast.tree.entry.Entry;
 import dev.goldmensch.fluava.ast.tree.entry.Term;
-import dev.goldmensch.fluava.ast.tree.message.Attribute;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
+import dev.goldmensch.fluava.ast.tree.message.Attribute;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import io.github.parseworks.Pair;
 import io.github.parseworks.Parser;
@@ -37,7 +37,6 @@ public class EntryP {
                     pattern.map(Pattern::new).then(attribute.zeroOrMany()).map(Pair::new),
                     Parser.<Character, Pattern>pure(null).then(attribute.many()).map(Pair::new)
             ))
-            .thenSkip(line_end)
             .map(identifier -> content -> new AstMessage(identifier, Optional.ofNullable(content.left()), content.right(), Optional.empty()));
 
     // Term
@@ -62,13 +61,14 @@ public class EntryP {
                     .map(Utils::listToString)
                     .optional()
             )
-            .thenSkip(line_end)
             .map(type -> content -> new Comment(type, content.orElse("")));
 
-    // Entry
-    static final Parser<Character, Entry> entry = oneOf(
+    private static final Parser<Character, Entry> entry_without_new_line = oneOf(
             message,
             term,
             comment_line
     );
+
+    // Entry
+    static final Parser<Character, Entry> entry = entry_without_new_line.thenSkip(line_end);
 }

@@ -14,6 +14,16 @@ import java.util.List;
 
 public class FixtureTestFactory {
 
+    static void main() {
+        String fluentContent = """
+                key08 =     Leading and trailing whitespace.    \s
+                """;
+
+        FluentParser parser = new FluentParser();
+        AstResource resource = parser.apply(fluentContent).orElseThrow();// should never throw
+        System.out.println(resource);
+    }
+
     @TestFactory
     @DisplayName("Fixtures tests")
     @SuppressWarnings("resource")
@@ -29,28 +39,36 @@ public class FixtureTestFactory {
             String jsonName = file.getFileName().toString().replace(".ftl", ".json");
             Path jsonFile = file.getParent().resolve(jsonName);
 
-            String fluentContent = Files.readString(file);
-            String jsonContent = Files.readString(jsonFile);
-
-            tests.add(buildTest(fluentContent, jsonContent, file.getFileName().toString()));
+            tests.add(buildTest(file, jsonFile));
         }
 
         return tests;
     }
 
-    private DynamicTest buildTest(String fluent, String json, String name) {
+    private DynamicTest buildTest(Path fluent, Path json) throws IOException {
+
+        String name = fluent.getFileName().toString();
+        String fluentContent = Files.readString(fluent);
+        String jsonContent = Files.readString(json);
+
         return DynamicTest.dynamicTest("Test fixture %s".formatted(name), () -> {
             System.out.println(name);
             FluentParser parser = new FluentParser();
-            AstResource resource = parser.apply(fluent).orElseThrow();// should never throw
+            AstResource resource = parser.apply(fluentContent).orElseThrow();// should never throw
 
             JSONObject parsed = new JsonFormatter().toJson(resource);
-            JSONObject expected = new JSONObject(json);
+            JSONObject expected = new JSONObject(jsonContent);
 
             if (!expected.similar(parsed)) {
                 AssertionFailureBuilder.assertionFailure()
                         .expected(expected.toString(2))
                         .actual(parsed.toString(2))
+                        .message("""
+                                Error while checking fixture: %s
+                                
+                                Fluent file: %s
+                                Json file: %s
+                                """.formatted(name, fluent.toAbsolutePath().toUri(), json.toAbsolutePath().toUri()))
                         .buildAndThrow();
             }
         });

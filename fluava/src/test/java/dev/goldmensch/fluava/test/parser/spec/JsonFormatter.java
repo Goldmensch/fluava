@@ -162,9 +162,16 @@ public class JsonFormatter {
     private JSONObject variant(Variant variant, boolean isDefault) {
         return new JSONObject()
                 .put("type", "Variant")
-                .put("key", inlineExpression((InlineExpression) variant.key()))
+                .put("key", variantKey(variant.key()))
                 .put("value", pattern(variant.pattern()))
-                .put("default", false);
+                .put("default", isDefault);
+    }
+
+    private JSONObject variantKey(Variant.VariantKey variantKey) {
+        return switch (variantKey) {
+            case InlineExpression.StringLiteral(String name) -> identifier(name);
+            case InlineExpression.NumberLiteral num -> inlineExpression(num);
+        };
     }
 
     private JSONObject inlineExpression(InlineExpression inlineExpression) {

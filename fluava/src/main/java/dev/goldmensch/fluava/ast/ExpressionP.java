@@ -7,7 +7,10 @@ import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
 import io.github.parseworks.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static dev.goldmensch.fluava.ast.MiscP.*;
 import static dev.goldmensch.fluava.ast.PatternP.inline_placeable;
@@ -167,7 +170,22 @@ class ExpressionP {
                 return new Variants(defaultVariants, first);
             });
 
-    static final Parser<Character, SelectExpression> select_expression = inline_expression
+    private static final Parser<Character, InlineExpression> selector = new Parser<>(in -> {
+        Result<Character, InlineExpression> result = inline_expression.apply(in);
+        if (result.isError()) return result;
+
+        InlineExpression expr = result.get();
+
+        return switch (expr) {
+            case InlineExpression.TermReference termRef when termRef.attribute().isEmpty() ->
+                    Result.failure(result.next(), "term value cannot be used as a selector");
+            case InlineExpression.MessageReference msgRef when msgRef.attribute().isPresent() ->
+                    Result.failure(result.next(), "Message attribute cannot be used as a selector!");
+            default -> result;
+        };
+    });
+
+    static final Parser<Character, SelectExpression> select_expression = selector
             .thenSkip(blank.optional())
             .thenSkip(string("->"))
             .thenSkip(opt_blank_inline)

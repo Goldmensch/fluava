@@ -1,5 +1,6 @@
 package dev.goldmensch.fluava.ast;
 
+import dev.goldmensch.fluava.ast.tree.expression.InlineExpression;
 import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
 import io.github.parseworks.*;
 
@@ -104,16 +105,36 @@ class PatternP {
             isNewLine = current.type == TypedPatternElement.Type.BLOCK_BLANK;
         }
 
+        if (result.getLast() instanceof PatternElement.Text(String content)) {
+            result.removeLast();
+            String stripped = content.stripTrailing();
+            if (!stripped.isBlank()) {
+                result.addLast(new PatternElement.Text(stripped));
+            }
+        }
+
         return result;
     }
 
     static {
+        Parser<Character, PatternElement> inline_expression_in_placeable = new Parser<>(in -> {
+            Result<Character, InlineExpression> result = inline_expression.apply(in);
+            if (result.isError()) return result.cast();
+
+            InlineExpression expression = result.get();
+            if (expression instanceof InlineExpression.TermReference termRef && termRef.attribute().isPresent()) {
+                return Result.failure(result.next(), "Term attribute cannot be accessed inside placeable!");
+            }
+
+            return result.cast();
+        });
+
         inline_placeable.set(
                 chr('{')
                         .skipThen(blank.optional())
                         .skipThen(oneOf(
                                 (Parser<Character, PatternElement>) (Parser<Character, ?>) select_expression,
-                                (Parser<Character, PatternElement>) (Parser<Character, ?>) inline_expression
+                                inline_expression_in_placeable
                         ))
                         .thenSkip(blank.optional())
                         .thenSkip(chr('}'))

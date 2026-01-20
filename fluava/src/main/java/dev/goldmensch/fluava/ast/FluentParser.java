@@ -33,7 +33,7 @@ public final class FluentParser implements Function<String, Result<AstResource>>
 
     private static final Parser<Character, AstResource.ResourceComponent> junk = junk_line
             .then(junk_line
-                    .not(oneOf(string("#"), string("#"), chr(ch -> Latin.lowerAlpha(ch) || Latin.upperAlpha(ch)).map(Object::toString)))
+                    .not(oneOf(string("#"), string("-"), chr(ch -> Latin.lowerAlpha(ch) || Latin.upperAlpha(ch)).map(Object::toString)))
                     .zeroOrMany()
             )
             .map(a -> b -> new AstResource.ResourceComponent.Junk(a + String.join("", b)));
