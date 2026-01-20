@@ -28,7 +28,7 @@ public final class FluentParser implements Function<String, Result<AstResource>>
             .not(chr('\n'))
             .zeroOrMany()
             .map(Utils::listToString)
-            .then(chr('\n').or(Combinators.<Character>eof().as('\u0000')))
+            .then(string("\n").or(Combinators.<Character>eof().as("")))
             .map(s -> c -> s + c);
 
     private static final Parser<Character, AstResource.ResourceComponent> junk = junk_line
