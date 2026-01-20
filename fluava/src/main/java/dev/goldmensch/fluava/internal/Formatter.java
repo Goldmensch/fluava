@@ -100,7 +100,7 @@ public class Formatter {
             default -> throw new UnsupportedOperationException();
         }
 
-        addPattern(task, expression.defaultVariant());
+        addPattern(task, expression.defaultVariant().pattern());
     }
 
     private void addPattern(Task task, Pattern pattern) {

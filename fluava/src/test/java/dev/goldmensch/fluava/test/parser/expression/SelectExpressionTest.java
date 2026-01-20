@@ -67,7 +67,7 @@ public class SelectExpressionTest {
         Assertions.assertTrue(result.isSuccess());
         SelectExpression expected = new SelectExpression(
                 new InlineExpression.VariableReference("var"),
-                new Pattern(FList.of(new PatternElement.Text("foo"))),
+                new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of());
 
         Assertions.assertEquals(expected, result.get());
@@ -87,7 +87,7 @@ public class SelectExpressionTest {
         Assertions.assertTrue(result.isSuccess());
         SelectExpression expected = new SelectExpression(
                 new InlineExpression.VariableReference("var"),
-                new Pattern(FList.of(new PatternElement.Text("foo"))),
+                new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
                         new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))
@@ -111,7 +111,7 @@ public class SelectExpressionTest {
         Assertions.assertTrue(result.isSuccess());
         SelectExpression expected = new SelectExpression(
                 new InlineExpression.VariableReference("var"),
-                new Pattern(FList.of(new PatternElement.Text("foo"))),
+                new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
                         new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))
@@ -135,7 +135,7 @@ public class SelectExpressionTest {
         Assertions.assertTrue(result.isSuccess());
         SelectExpression expected = new SelectExpression(
                 new InlineExpression.VariableReference("var"),
-                new Pattern(FList.of(new PatternElement.Text("foo"))),
+                new Variant(new InlineExpression.StringLiteral("warn"), new Pattern(FList.of(new PatternElement.Text("foo")))),
                 FList.of(
                         new Variant(new InlineExpression.StringLiteral("one"), new Pattern(FList.of(new PatternElement.Text("the first, the only")))),
                         new Variant(new InlineExpression.StringLiteral("kick"), new Pattern(FList.of(new PatternElement.Text("bar")))

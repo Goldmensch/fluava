@@ -113,14 +113,15 @@ class ExpressionP {
             .then(pattern.map(Pattern::new))
             .map(key -> pattern -> new Variant(key, pattern));
 
-    private static final Parser<Character, Pattern> default_variant = line_end
+    private static final Parser<Character, Variant> default_variant = line_end
             .skipThen(blank.optional())
             .skipThen(chr('*'))
             .skipThen(variant_key)
-            .skipThen(opt_blank_inline)
-            .skipThen(pattern.map(Pattern::new));
+            .thenSkip(opt_blank_inline)
+            .then(pattern.map(Pattern::new))
+            .map(key -> pattern -> new Variant(key, pattern));
 
-    private record Variants(Pattern defaultV, FList<Variant> other) {}
+    private record Variants(Variant defaultV, FList<Variant> other) {}
 
     private static final Parser<Character, Variants> variant_list = variant.zeroOrMany()
             .then(default_variant)
