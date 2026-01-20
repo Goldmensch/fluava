@@ -99,7 +99,11 @@
                                     "type": "Identifier",
                                     "name": "case"
                                 },
-                                "arguments": null
+                                "arguments": {
+                                    "named": [],
+                                    "positional": [],
+                                    "type": "CallArguments"
+                                }
                             },
                             "variants": [
                                 {

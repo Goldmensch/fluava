@@ -5,6 +5,7 @@ import dev.goldmensch.fluava.ast.tree.expression.InlineExpression;
 import dev.goldmensch.fluava.ast.tree.expression.SelectExpression;
 import dev.goldmensch.fluava.ast.tree.expression.Variant;
 import dev.goldmensch.fluava.ast.tree.pattern.Pattern;
+import dev.goldmensch.fluava.ast.tree.pattern.PatternElement;
 import io.github.parseworks.*;
 
 import java.util.HashSet;
@@ -166,22 +167,29 @@ class ExpressionP {
             .then(variant.zeroOrMany())
             .thenSkip(line_end)
             .map(first -> defaultVariants -> second -> {
+                first.add(defaultVariants);
                 first.addAll(second);
                 return new Variants(defaultVariants, first);
             });
 
+    // https://github.com/projectfluent/fluent/blob/main/syntax/abstract.js#L53
     private static final Parser<Character, InlineExpression> selector = new Parser<>(in -> {
-        Result<Character, InlineExpression> result = inline_expression.apply(in);
-        if (result.isError()) return result;
+        Result<Character, ? extends InlineExpression> result = oneOf(
+                string_literal.map(InlineExpression.StringLiteral::new),
+                number_literal.map(InlineExpression.NumberLiteral::new),
+                functional_reference.map(InlineExpression.FunctionalReference::new),
+                term_reference.map(InlineExpression.TermReference::new),
+                variable_reference.map(InlineExpression.VariableReference::new)
+        ).apply(in);
 
-        InlineExpression expr = result.get();
+        if (result.isError()) return result.cast();
+
+        PatternElement expr = result.get();
 
         return switch (expr) {
             case InlineExpression.TermReference termRef when termRef.attribute().isEmpty() ->
                     Result.failure(result.next(), "term value cannot be used as a selector");
-            case InlineExpression.MessageReference msgRef when msgRef.attribute().isPresent() ->
-                    Result.failure(result.next(), "Message attribute cannot be used as a selector!");
-            default -> result;
+            default -> result.cast();
         };
     });
 

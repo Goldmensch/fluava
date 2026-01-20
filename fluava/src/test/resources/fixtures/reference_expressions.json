@@ -48,7 +48,11 @@
                                 "name": "term"
                             },
                             "attribute": null,
-                            "arguments": null
+                            "arguments": {
+                                "named": [],
+                                "positional": [],
+                                "type": "CallArguments"
+                            }
                         }
                     }
                 ]

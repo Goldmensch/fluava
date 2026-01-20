@@ -149,9 +149,8 @@ public class JsonFormatter {
     private JSONObject selectExpression(SelectExpression selectExpression) {
         List<JSONObject> variants = selectExpression.others()
                 .stream()
-                .map((Variant variant) -> variant(variant, false))
+                .map((Variant variant) -> variant(variant, selectExpression.defaultVariant()))
                 .collect(Collectors.toList());
-        variants.add(variant(selectExpression.defaultVariant(), true));
 
         return new JSONObject()
                 .put("type", "SelectExpression")
@@ -159,12 +158,12 @@ public class JsonFormatter {
                 .put("variants", new JSONArray(variants));
     }
 
-    private JSONObject variant(Variant variant, boolean isDefault) {
+    private JSONObject variant(Variant variant, Variant defaultVar) {
         return new JSONObject()
                 .put("type", "Variant")
                 .put("key", variantKey(variant.key()))
                 .put("value", pattern(variant.pattern()))
-                .put("default", isDefault);
+                .put("default", variant.equals(defaultVar));
     }
 
     private JSONObject variantKey(Variant.VariantKey variantKey) {

@@ -121,7 +121,7 @@ class PatternP {
             Result<Character, InlineExpression> result = inline_expression.apply(in);
             if (result.isError()) return result.cast();
 
-            InlineExpression expression = result.get();
+            PatternElement expression = result.get();
             if (expression instanceof InlineExpression.TermReference termRef && termRef.attribute().isPresent()) {
                 return Result.failure(result.next(), "Term attribute cannot be accessed inside placeable!");
             }

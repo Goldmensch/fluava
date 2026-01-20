@@ -52,7 +52,6 @@ public class FixtureTestFactory {
         String jsonContent = Files.readString(json);
 
         return DynamicTest.dynamicTest("Test fixture %s".formatted(name), () -> {
-            System.out.println(name);
             FluentParser parser = new FluentParser();
             AstResource resource = parser.apply(fluentContent).orElseThrow();// should never throw
 
