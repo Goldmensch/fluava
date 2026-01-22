@@ -5,6 +5,7 @@ import dev.goldmensch.fluava.function.util.TriFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 /// This interface models the functions described by project fluent.
@@ -84,21 +85,26 @@ public interface Function<R extends Value.Formatted, T> {
         @SuppressWarnings("unchecked")
         @Override
         default Result<R> apply(Context context, Arguments<T> arguments, Options options) throws FunctionException {
-
-            // try to convert to type that is matching one of the supported ones, kinda band-aid but works :D
             Result<T> convertedType = acceptableTypes()
                     .stream()
                     .map(arguments::tryGetFirst)
                     .filter(result -> result instanceof Result.Success<? extends T>)
                     .findAny()
                     .map(success -> (Result<T>) success)
-                    .orElseGet(() -> new Result.Failure<>("Couldn't convert given type to any of the acceptable ones."));
+                    .orElseGet(() -> {
+                        String accepted = acceptableTypes().stream()
+                                .map(Class::getName)
+                                .collect(Collectors.joining(","));
+
+                        // Object.class is always possible
+                        Class<?> rawClass = arguments.get(0, Object.class).getClass();
+                        return new Result.Failure<>("Couldn't convert type %s to any of the acceptable ones: %s".formatted(rawClass, accepted));
+                    });
 
             if (convertedType instanceof Result.Failure<T> failure) return failure.to();
 
             // safe to call orElseThrow since checked above
             return apply(context, convertedType.orElseThrow(), options);
         }
-
     }
 }
