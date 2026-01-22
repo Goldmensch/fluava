@@ -1,0 +1,1 @@
+language = Schweizerdeutsch 1901 Reform

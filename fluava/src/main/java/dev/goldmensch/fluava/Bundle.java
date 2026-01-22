@@ -1,6 +1,5 @@
 package dev.goldmensch.fluava;
 
-import dev.goldmensch.fluava.ast.tree.AstResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +22,12 @@ import java.util.stream.Stream;
 /// 4. BASE/LANGUAGE_COUNTRY.ftl
 /// 5. BASE_LANGUAGE.ftl
 /// 6. BASE/LANGUAGE.ftl
+///
+/// The parts correspond to the [lower case][String#toLowerCase()] return type of following methods:
+///
+/// - LANGUAGE -> [Locale#getLanguage()]
+/// - COUNTRY -> [Locale#getCountry()]
+/// - VARIANT -> [Locale#getVariant()]
 ///
 /// If a key isn't found in any of the above files, the same procedure will be done for the given "fallback" locale.
 /// If even then a key isn't found, the key will be returned as the "translated value" by any [Resource]/[Message].
@@ -106,35 +111,38 @@ public class Bundle {
 
         log.debug("Loading sources of bundle with base {} for locale {}", base, l);
 
+        String language = l.getLanguage().toLowerCase();
+        String country = l.getCountry().toLowerCase();
+        String variant = l.getVariant().toLowerCase();
         return Stream.of(
-                        new Bundle.Pair(l, "%s_%s_%s.ftl".formatted(l.getLanguage(), l.getCountry(), l.getVariant())),
-                        new Bundle.Pair(Locale.of(l.getLanguage(), l.getCountry()), "%s_%s.ftl".formatted(l.getLanguage(), l.getCountry())),
-                        new Bundle.Pair(Locale.of(l.getLanguage()), "%s.ftl".formatted(l.getLanguage()))
+                        new Bundle.Pair(l, "%s_%s_%s.ftl".formatted(language, country, variant)),
+                        new Bundle.Pair(Locale.of(language, country), "%s_%s.ftl".formatted(language, country)),
+                        new Bundle.Pair(Locale.of(language), "%s.ftl".formatted(language))
                 )
-                .map(pair -> {
-                    AstResource resource = readFile(base + "_", pair.name);
-                    if (resource == null) resource = readFile(base + "/", pair.name);
-                    if (resource != null) return new Resource.Pair(pair.locale, resource);
-                    return null;
-                })
-                .filter(Objects::nonNull)
+                .flatMap(pair -> readFile(base + "_", pair.name, pair.locale)
+                        .or(() -> readFile(base + "/", pair.name, pair.locale)).stream())
+                .peek(triple -> log.debug("Found fluent file {} for bundle {} and locale {}", triple.name, base, triple.resource.locale()))
+                .map(Triple::resource)
                 .collect(Collectors.toList());
     }
 
     private record Pair(Locale locale, String name) {}
+    private record Triple(String name, Resource.Pair resource) {}
 
-    private AstResource readFile(String prefix, String name) {
+    private Optional<Triple> readFile(String prefix, String name, Locale locale) {
         String path = "/%s%s".formatted(prefix, name);
 
-        log.debug("Reading file from classpath: {}", path);
+        log.debug("Trying to read file from classpath: {}", path);
 
         try (InputStream in = this.getClass().getResourceAsStream(path)) {
-            if (in == null) return null;
+            if (in == null) return Optional.empty();
             String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            return fluava.parse(content).orElse(null);
+            return fluava.parse(content)
+                    .toOptional()
+                    .map(resource -> new Triple(name, new Resource.Pair(locale, resource)));
         } catch (IOException e) {
             log.error("Error while reading fluent file from classpath at {}", path, e);
-            return null;
+            return Optional.empty();
         }
     }
 

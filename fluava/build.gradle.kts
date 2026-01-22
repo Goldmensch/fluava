@@ -21,6 +21,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    testRuntimeOnly("ch.qos.logback", "logback-classic", "1.5.18")
 }
 
 tasks.test {

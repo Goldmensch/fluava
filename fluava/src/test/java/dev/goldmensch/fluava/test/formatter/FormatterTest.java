@@ -258,5 +258,4 @@ public class FormatterTest {
         Assertions.assertEquals("foo", result);
     }
 
-
 }

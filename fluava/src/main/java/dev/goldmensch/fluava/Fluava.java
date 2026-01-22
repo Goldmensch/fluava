@@ -96,7 +96,7 @@ public class Fluava {
                 ? bundleRoot + "/" + base
                 : base;
 
-        log.debug("Creating bundle with path: {}", path);
+        log.debug("Bundle with base {} created", path);
 
         return new Bundle(this, fallback, path);
     }
