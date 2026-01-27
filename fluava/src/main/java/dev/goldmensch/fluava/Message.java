@@ -130,8 +130,8 @@ public class Message {
 
     Message withAttributeKey(String key) {
         String joined = "%s.%s".formatted(this.key, key);
-        if (!attributeFormatters.containsKey(key)) {
-            return new Message(joined); // if attribute key isn't found, return empty message
+        if (notFound() || !attributeFormatters.containsKey(key)) {
+            return new Message(joined); // if attribute or message isn't found, return empty message
         }
 
         return new Message(joined, locale, contentFormatter, attributeFormatters, key);

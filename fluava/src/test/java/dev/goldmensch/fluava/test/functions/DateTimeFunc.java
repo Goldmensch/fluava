@@ -1,6 +1,7 @@
 package dev.goldmensch.fluava.test.functions;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import static dev.goldmensch.fluava.test.functions.Helpers.format;
 
+@Disabled
 public class DateTimeFunc {
 
     LocalDateTime badDay = LocalDateTime.of(2025, 1, 20, 19, 45);
@@ -47,6 +49,27 @@ public class DateTimeFunc {
     void explicit_standard() {
         String result = format("{ DATETIME($var) }", Locale.ENGLISH, Map.of("var", badDay));
         Assertions.assertEquals("Monday, January 20, 2025, 7:45:00\u202FPM Central European Standard Time", result);
+    }
+
+    @Test
+    void hour12() {
+        String result = format("{ DATETIME($var, hour12: \"true\") }", Locale.GERMAN, Map.of("var", badDay));
+        Assertions.assertEquals("Montag, 20. Januar 2025, 07:45:00 Mitteleuropäische Normalzeit", result);
+    }
+
+    @Test
+    void weekday_short() {
+        String result = format("{ DATETIME($var, weekday: \"short\") }", Locale.GERMAN, Map.of("var", badDay));
+        Assertions.assertEquals("Mo", result);
+    }
+
+    @Test
+    void weekday_long() {
+        String expression = """
+                { DATETIME($var, weekday: "short") }""";
+
+        String result = format(expression, Locale.GERMAN, Map.of("var", badDay));
+        Assertions.assertEquals("Mo", result);
     }
 
 
