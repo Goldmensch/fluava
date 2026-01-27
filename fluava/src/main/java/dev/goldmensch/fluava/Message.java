@@ -75,7 +75,7 @@ public class Message {
 
         return attributeKey == null
                 ? contentFormatter.apply(locale, variables)
-                : interpolated(variables).attribute(attributeKey);
+                : attributeFormatters.get(attributeKey).apply(locale, variables);
     }
 
     /// Returns both message and attributes of this entry after applying the given variables.
@@ -129,6 +129,11 @@ public class Message {
     }
 
     Message withAttributeKey(String key) {
-        return new Message("%s.%s".formatted(this.key, key), locale, contentFormatter, attributeFormatters, key);
+        String joined = "%s.%s".formatted(this.key, key);
+        if (!attributeFormatters.containsKey(key)) {
+            return new Message(joined); // if attribute key isn't found, return empty message
+        }
+
+        return new Message(joined, locale, contentFormatter, attributeFormatters, key);
     }
 }
