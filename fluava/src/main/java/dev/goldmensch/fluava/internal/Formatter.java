@@ -97,7 +97,11 @@ public class Formatter {
                 }
             }
 
-            default -> throw new UnsupportedOperationException();
+            case Value.Raw _ -> {
+                log.warn("Couldn't format message (key = {}), invalid selector in select expression: {}", key, expression.expression());
+                task.builder().append("null");
+                return;
+            }
         }
 
         addPattern(task, expression.defaultVariant().pattern());
