@@ -11,6 +11,8 @@ dev.goldmensch.fluava.function.builtin
 dev.goldmensch.fluava.function.internal
 dev.goldmensch.fluava.function.util
 dev.goldmensch.fluava.internal
+dev.goldmensch.fluava.logging
+dev.goldmensch.fluava.logging.internal
 module:dev.goldmensch.fluava.cldrplurals
 dev.goldmensch.cldrplurals
 dev.goldmensch.cldrplurals.internal
