@@ -109,7 +109,7 @@ public class Bundle {
 
     private SequencedCollection<Resource.Pair> loadSources(Locale l) {
 
-        log.debug("Loading sources of bundle with base {} for locale {}", base, l);
+        log.trace("Loading sources of bundle with base {} for locale {}", base, l);
 
         String language = l.getLanguage().toLowerCase();
         String country = l.getCountry().toLowerCase();
@@ -121,7 +121,7 @@ public class Bundle {
                 )
                 .flatMap(pair -> readFile(base + "_", pair.name, pair.locale)
                         .or(() -> readFile(base + "/", pair.name, pair.locale)).stream())
-                .peek(triple -> log.debug("Found fluent file {} for bundle {} and locale {}", triple.name, base, triple.resource.locale()))
+                .peek(triple -> log.trace("Found fluent file {} for bundle {} and locale {}", triple.name, base, triple.resource.locale()))
                 .map(Triple::resource)
                 .collect(Collectors.toList());
     }
@@ -132,7 +132,7 @@ public class Bundle {
     private Optional<Triple> readFile(String prefix, String name, Locale locale) {
         String path = "/%s%s".formatted(prefix, name);
 
-        log.debug("Trying to read file from classpath: {}", path);
+        log.trace("Trying to read file from classpath: {}", path);
 
         try (InputStream in = this.getClass().getResourceAsStream(path)) {
             if (in == null) return Optional.empty();
