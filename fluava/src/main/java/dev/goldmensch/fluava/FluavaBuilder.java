@@ -2,6 +2,8 @@ package dev.goldmensch.fluava;
 
 import dev.goldmensch.fluava.function.Function;
 import dev.goldmensch.fluava.function.internal.FunctionConfigImpl;
+import dev.goldmensch.fluava.logging.LogConfig;
+import dev.goldmensch.fluava.logging.internal.LogConfigImpl;
 
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -12,6 +14,7 @@ import java.util.function.Consumer;
 public final class FluavaBuilder {
     private String bundleRoot = null;
     private final FunctionConfigImpl functionConfig;
+    private final LogConfigImpl logConfig = new LogConfigImpl();
     private Locale fallback = Locale.ENGLISH;
 
     FluavaBuilder() {
@@ -56,6 +59,14 @@ public final class FluavaBuilder {
         return this;
     }
 
+    /// Allows to configure the logging level of some messages.
+    ///
+    /// This comes in handy if Fluava would otherwise spam your log.
+    public FluavaBuilder logging(Consumer<LogConfig> consumer) {
+        consumer.accept(logConfig);
+        return this;
+    }
+
     /// Builds a new [Fluava] instance based on the configuration made in this builder.
     ///
     /// @return the [Fluava] instance
@@ -63,7 +74,8 @@ public final class FluavaBuilder {
         return new Fluava(
                 bundleRoot,
                 fallback,
-                functionConfig
+                functionConfig,
+                logConfig
         );
     }
 

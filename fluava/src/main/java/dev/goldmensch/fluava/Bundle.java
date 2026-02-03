@@ -104,7 +104,7 @@ public class Bundle {
             sources.addAll(loadSources(fallback));
         }
 
-        return new Resource(fluava.functions(), sources);
+        return new Resource(fluava.functions(), sources, fluava.logConfig());
     }
 
     private SequencedCollection<Resource.Pair> loadSources(Locale l) {

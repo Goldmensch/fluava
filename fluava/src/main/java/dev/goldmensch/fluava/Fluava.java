@@ -4,6 +4,7 @@ import dev.goldmensch.fluava.ast.FluentParser;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.function.internal.FunctionConfigImpl;
 import dev.goldmensch.fluava.function.internal.Functions;
+import dev.goldmensch.fluava.logging.internal.LogConfigImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +34,16 @@ public class Fluava {
     private final Functions functions;
     private final FluentParser parser = new FluentParser();
     private final FunctionConfigImpl functionConfig;
+    private final LogConfigImpl logConfig;
 
     /// @param fallback the fallback locale to use
     /// @param functionConfig the function configuration to use
-    Fluava(String bundleRoot, Locale fallback, FunctionConfigImpl functionConfig) {
+    Fluava(String bundleRoot, Locale fallback, FunctionConfigImpl functionConfig, LogConfigImpl logConfig) {
         this.bundleRoot = bundleRoot;
         this.fallback = fallback;
         this.functionConfig = functionConfig;
         this.functions = new Functions(functionConfig);
+        this.logConfig = logConfig;
     }
 
     /// Creates a new [FluavaBuilder] to configure your [Fluava] instance.
@@ -76,7 +79,7 @@ public class Fluava {
         Result<AstResource> parsingResult = parse(content);
 
         return switch (parsingResult) {
-            case Result.Success(AstResource value) -> new Result.Success<>(new Resource(functions, List.of(new Resource.Pair(locale, value))));
+            case Result.Success(AstResource value) -> new Result.Success<>(new Resource(functions, List.of(new Resource.Pair(locale, value)), logConfig));
             case Result.Failure<?> failure -> failure.to();
         };
     }
@@ -120,5 +123,9 @@ public class Fluava {
 
     String bundleRoot() {
         return bundleRoot;
+    }
+
+    LogConfigImpl logConfig() {
+        return logConfig;
     }
 }

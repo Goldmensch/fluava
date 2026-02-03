@@ -3,6 +3,7 @@ package dev.goldmensch.fluava;
 import dev.goldmensch.fluava.ast.tree.AstResource;
 import dev.goldmensch.fluava.ast.tree.message.AstMessage;
 import dev.goldmensch.fluava.function.internal.Functions;
+import dev.goldmensch.fluava.logging.internal.LogConfigImpl;
 import io.github.parseworks.FList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +20,10 @@ public class Resource {
 
     private static final Logger log = LoggerFactory.getLogger(Resource.class);
     private final SequencedCollection<Level> levels;
+    private final LogConfigImpl logConfig;
 
-    Resource(Functions functions, SequencedCollection<Pair> source) {
+    Resource(Functions functions, SequencedCollection<Pair> source, LogConfigImpl logConfig) {
+        this.logConfig = logConfig;
         this.levels = source
                 .stream()
                 .map(entry -> {
@@ -89,7 +92,7 @@ public class Resource {
                 .map(Level::locale)
                 .map(Locale::toString)
                 .collect(Collectors.joining(", "));
-        log.debug("Didn't find key '{}', searched in locales: {}", key, searchedLocals);
+        log.atLevel(logConfig.keyNotFound()).log("Didn't find key '{}', searched in locales: {}", key, searchedLocals);
         return new Message(key);
     }
 
